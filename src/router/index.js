@@ -1,14 +1,21 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-
+// import HomeView from '../views/HomeView.vue'
+import SideBar from '../components/sideBar/index.vue'
+// import about from '../views/AboutView.vue'
+import dash from '../views/dash/index'
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'dash',
+    component: SideBar,
+    children:[{
+      path : '/dash',
+      name: 'dash',
+      components : dash
+    }]
   },
   {
     path: '/about',
