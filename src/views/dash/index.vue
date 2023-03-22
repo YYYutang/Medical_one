@@ -20,9 +20,9 @@
         <el-card class="card">
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>系统模型信息</span>
-            <!--            画图容器-->
-            <div id="entry" style="height: 150px;"></div>
           </div>
+          <!--            画图容器-->
+          <div id="entry" style="height: 150px;"></div>
         </el-card>
       </div>
     </div>
