@@ -2,14 +2,16 @@
   <div>
     <div class="topBigDiv">
       <div class="left">
-        <el-card>
+        <el-card class="card">
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>快捷入口</span>
           </div>
           <div class="quickEntryBox">
             <div v-for="(item,index) in fakeEntry" :key="index">
-              <div class="singleBox" @click="test(index)"><img src="../../assets/示例图片.png" class="imgStyle"></div>
-              <div style="text-align: center">{{item}}</div>
+              <div class="singleBox" @click="test(index)"><img src="../../assets/logo.png" class="imgStyle">
+                <div style="text-align: center">{{item}}</div>
+              </div>
+
             </div>
           </div>
         </el-card>
@@ -60,7 +62,7 @@ export default {
           "scales": 1920
         }],
       line: null,
-      fakeEntry: [1,2,3,4,5]
+      fakeEntry: ['数据表管理','模型管理','多病种关联关系挖掘','疾病预测','其他功能']
     }
   },
   methods: {
@@ -121,8 +123,8 @@ export default {
 .topBigDiv .left .quickEntryBox .singleBox{
   /*border: 1px red solid;*/
   /*box-sizing: border-box;*/
-  width: 50px;
-  height: 50px;
+  width: 80px;
+  height: 80px;
   border-radius: 20%;
 }
 .topBigDiv .left .quickEntryBox .imgStyle{
