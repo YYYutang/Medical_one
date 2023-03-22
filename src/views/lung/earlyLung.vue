@@ -7,7 +7,7 @@ import tabRow from '@/components/tab/index'
 import {tabSwitch} from "@/components/mixins/mixin";
 export default {
   name: "earlyLung",
-  components : {tabRow},
+  components : {'tab-row':tabRow},
   mixins : {tabSwitch}
 }
 </script>

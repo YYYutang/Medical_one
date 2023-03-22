@@ -1,33 +1,27 @@
 <template>
-  <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-    <el-tab-pane label="数据管理" name="first">
-<!--    这里继续写数据管理内容 这个东西应该都是一样的-->
-      <h3>halo</h3>
-    </el-tab-pane>
-    <el-tab-pane label="模型管理" name="second">
-<!--    同上-->
-      <h3>halo2</h3>
-    </el-tab-pane>
-    <el-tab-pane label="多病种关联关系挖掘" name="third">
-<!--    同上-->
-      <h3>halo3</h3>
-    </el-tab-pane>
-    <el-tab-pane label="风险预测" name="fourth">
-<!--      如果要改页面 就需要配多个模板-->
-      <h3>halo4</h3>
-    </el-tab-pane>
-  </el-tabs>
+<div>
+<el-menu :default-active="this.$route.path" class="el-menu-demo" mode="horizontal" @select="handleSelect" router>
+  <el-menu-item index="/dataManage">数据管理</el-menu-item>
+  <el-menu-item index="/modelManage">模型管理</el-menu-item>
+  <el-menu-item index="/connectMining">多病种关联关系挖掘</el-menu-item>
+  <el-menu-item index="/dangePredict">风险预测</el-menu-item>
+</el-menu> 
+  <el-main >
+    <router-view/>
+  </el-main>
+  </div>
 </template>
 
 <script>
 export default {
+
   data() {
     return {
-      activeName: 'first'
+
     };
   },
   methods: {
-    handleClick(tab, event) {
+    handleSelect(tab, event) {
       console.log(tab, event);
     }
   }
@@ -39,4 +33,6 @@ export default {
 /*  padding-right: 40px;*/
 /*  margin-right: 150px;*/
 /*}*/
+
+
 </style>
