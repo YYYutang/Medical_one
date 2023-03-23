@@ -10,6 +10,7 @@
   "dependencies": {
     "@antv/g2plot": "^2.4.28",
     "core-js": "^3.8.3",
+    "echarts": "^4.9.0",
     "element-ui": "^2.15.13",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
