@@ -55,70 +55,70 @@
         </el-form>
       </div>
       <div id="charts1" v-show="showChart">
-          <div id="inlineForm">
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="病种1">
-            <el-select
-              v-model="formInline.value3"
-              placeholder="请选择"
-              style="width: 100px"
-            >
-              <el-option
-                v-for="item in chartOneOptionsOne"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+        <div id="inlineForm">
+          <el-form :inline="true" :model="formInline" class="demo-form-inline">
+            <el-form-item label="病种1">
+              <el-select
+                v-model="formInline.value3"
+                placeholder="请选择"
+                style="width: 100px"
               >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="病种1的指标">
-            <el-select
-              v-model="formInline.value4"
-              placeholder="请选择"
-              style="width: 100px"
-            >
-              <el-option
-                v-for="item in chartOneOptionsTwo"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                <el-option
+                  v-for="item in chartOneOptionsOne"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="病种1的指标">
+              <el-select
+                v-model="formInline.value4"
+                placeholder="请选择"
+                style="width: 100px"
               >
-              </el-option>
-            </el-select>
-          </el-form-item>
-        <el-form-item label="病种2">
-          <el-select
-            v-model="formInline.value5"
-            placeholder="请选择"
-            style="width: 100px"
-          >
-            <el-option
-              v-for="item in chartOneOptionsOne"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="病种2的指标">
-          <el-select
-            v-model="formInline.value6"
-            placeholder="请选择"
-            style="width: 100px"
-          >
-            <el-option
-              v-for="item in chartOneOptionsTwo"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        </el-form>
-          </div>
+                <el-option
+                  v-for="item in chartOneOptionsTwo"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="病种2">
+              <el-select
+                v-model="formInline.value5"
+                placeholder="请选择"
+                style="width: 100px"
+              >
+                <el-option
+                  v-for="item in chartOneOptionsOne"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="病种2的指标">
+              <el-select
+                v-model="formInline.value6"
+                placeholder="请选择"
+                style="width: 100px"
+              >
+                <el-option
+                  v-for="item in chartOneOptionsTwo"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
         <div
           id="chart1"
           style="width: 600px; height: 400px"
@@ -242,7 +242,7 @@ export default {
       ],
       value1: [],
       value2: [],
-      formInline: { value3: "", value4: "",value5:"",value6:"" },
+      formInline: { value3: "", value4: "", value5: "", value6: "" },
     };
   },
   methods: {
@@ -524,7 +524,7 @@ export default {
   justify-content: center;
   align-items: center;
 }
-#inlineForm{
-    margin-top:50px;
+#inlineForm {
+  margin-top: 50px;
 }
 </style> 
