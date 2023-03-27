@@ -6,8 +6,14 @@
     </el-header>
 
     <el-container id="maintest">
-      <div id="main">
-        <el-form ref="form" :model="form" label-width="120px" v-show="showForm">
+      <div id="mainform">
+        <el-form
+          ref="form"
+          :model="form"
+          label-width="120px"
+          v-show="showForm"
+          style="margin-top: 150px"
+        >
           <el-form-item label="任务名称">
             <el-input v-model="form.name"></el-input>
           </el-form-item>
@@ -55,92 +61,149 @@
         </el-form>
       </div>
       <div id="charts1" v-show="showChart">
-        <div id="inlineForm">
-          <el-form :inline="true" :model="formInline" class="demo-form-inline">
-            <el-form-item label="病种1">
-              <el-select
-                v-model="formInline.value3"
-                placeholder="请选择"
-                style="width: 100px"
-              >
-                <el-option
-                  v-for="item in chartOneOptionsOne"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+        <el-card shadow="hover" id="card1" class="zoomOut" :class="{
+        'zoomIn':isZoomIn
+        }">
+          <div id="inlineForm">
+            <el-form
+              :inline="true"
+              :model="formInline"
+              class="demo-form-inline"
+            >
+              <el-form-item>
+                <el-tooltip
+                  effect="dark"
+                  :content="fullscreen ? `缩小` : `放大`"
+                  placement="bottom"
                 >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="病种1的指标">
-              <el-select
-                v-model="formInline.value4"
-                placeholder="请选择"
-                style="width: 100px"
-              >
-                <el-option
-                  v-for="item in chartOneOptionsTwo"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  <i
+                    class="el-icon-full-screen"
+                    v-on:click="handleFullScreen('card1')"
+                  ></i>
+                </el-tooltip>
+              </el-form-item>
+              <el-form-item label="病种1">
+                <el-select
+                  v-model="formInline.value3"
+                  placeholder="请选择"
+                  style="width: 100px"
                 >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="病种2">
-              <el-select
-                v-model="formInline.value5"
-                placeholder="请选择"
-                style="width: 100px"
-              >
-                <el-option
-                  v-for="item in chartOneOptionsOne"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  <el-option
+                    v-for="item in chartOneOptionsOne"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="病种1的指标">
+                <el-select
+                  v-model="formInline.value4"
+                  placeholder="请选择"
+                  style="width: 100px"
                 >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="病种2的指标">
-              <el-select
-                v-model="formInline.value6"
-                placeholder="请选择"
-                style="width: 100px"
-              >
-                <el-option
-                  v-for="item in chartOneOptionsTwo"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  <el-option
+                    v-for="item in chartOneOptionsTwo"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="病种2">
+                <el-select
+                  v-model="formInline.value5"
+                  placeholder="请选择"
+                  style="width: 100px"
                 >
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div
-          id="chart1"
-          style="width: 600px; height: 400px"
-          v-show="showChart"
-        ></div>
-        <div
-          id="chart2"
-          style="width: 800px; height: 400px"
-          v-show="showChart"
-        ></div>
+                  <el-option
+                    v-for="item in chartOneOptionsOne"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="病种2的指标">
+                <el-select
+                  v-model="formInline.value6"
+                  placeholder="请选择"
+                  style="width: 100px"
+                >
+                  <el-option
+                    v-for="item in chartOneOptionsTwo"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
+          <div
+            id="chart1"
+            style="width: 600px; height: 400px"
+            v-show="showChart"
+          ></div>
+        </el-card>
+        <el-card shadow="hover" @click="fullScreen" id="card2">
+          <i class="el-icon-full-screen" v-on:click="handleFullScreen('card2')"></i>
+          <div
+            id="chart2"
+            style="width: 800px; height: 400px"
+            v-show="showChart"
+          ></div>
+        </el-card>
       </div>
-      <div id="charts2">
-        <div
-          id="chart3"
-          style="width: 600px; height: 400px"
-          v-show="showChart"
-        ></div>
-        <div
-          id="chart4"
-          style="width: 600px; height: 400px"
-          v-show="showChart"
-        ></div>
+      <div id="charts2" v-show="showChart">
+        <el-card shadow="hover" @click="fullScreen" id="card3">
+          <div id="formInLine2">
+            <el-form :inline="true" :model="formInline2">
+              <el-form-item>
+                <i class="el-icon-full-screen" v-on:click="handleFullScreen('card3')"></i>
+              </el-form-item>
+              <el-form-item label="病种">
+                <el-select
+                  v-model="formInline2.value"
+                  placeholder="请选择"
+                  style="width: 100px"
+                >
+                  <el-option
+                    v-for="item in chartOneOptionsOne"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="病种的指标">
+                <el-select
+                  v-model="formInline2.value2"
+                  placeholder="请选择"
+                  style="width: 100px"
+                >
+                  <el-option
+                    v-for="item in chartOneOptionsTwo"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
+          <div id="chart3" style="width: 600px; height: 400px"></div>
+        </el-card>
+        <el-card shadow="hover" @click="fullScreen"  id="card4">
+          <i class="el-icon-full-screen" v-on:click="handleFullScreen('card4')"></i>
+          <div id="chart4" style="width: 600px; height: 400px"></div>
+        </el-card>
       </div>
     </el-container>
   </div>
@@ -156,6 +219,8 @@ export default {
         description: "",
         model: "",
       },
+      fullScreen:false,
+      isZoomIn:false,
       diseaseOptions: [
         {
           value: "选项1",
@@ -243,6 +308,7 @@ export default {
       value1: [],
       value2: [],
       formInline: { value3: "", value4: "", value5: "", value6: "" },
+      formInline2: { value: "", value2: "" },
     };
   },
   methods: {
@@ -266,6 +332,10 @@ export default {
       // 指定图表的配置项和数据
       //散点图
       let option1 = {
+        title: {
+          text: "散点图",
+          left: "center",
+        },
         xAxis: {},
         yAxis: {},
         color: "#75AAF2",
@@ -319,6 +389,10 @@ export default {
             return d1 + "与" + params.name + "的关联度为" + level;
           },
         },
+        title: {
+          text: "热力图",
+          left: "center",
+        },
         grid: {
           height: "50%",
           top: "10%",
@@ -366,7 +440,7 @@ export default {
       //饼状图
       let option3 = {
         title: {
-          text: "分布图",
+          text: "饼状分布图",
           subtext: "Fake Data",
           left: "center",
         },
@@ -403,6 +477,10 @@ export default {
       };
       //关系图
       let option4 = {
+        title: {
+          text: "关系图",
+          left: "center",
+        },
         animationDurationUpdate: 1500,
         animationEasingUpdate: "quinticInOut",
         series: [
@@ -432,7 +510,7 @@ export default {
               {
                 name: "肺癌",
                 x: 550,
-                y: 100,
+                y: 200,
               },
               {
                 name: "阿尔兹海默症",
@@ -450,7 +528,7 @@ export default {
               {
                 source: 0,
                 target: 1,
-                symbolSize: [5, 20],
+                symbolSize: [5, 19],
                 lineStyle: {
                   width: 5,
                   curveness: 0.2,
@@ -506,9 +584,48 @@ export default {
       myChart3.setOption(option3);
       myChart4.setOption(option4);
     },
+    handleFullScreen(id) {
+            //   let element = document.documentElement   //全屏容器
+            let element = document.getElementById(id); //需要全屏容器的id
+            if (this.fullscreen) {
+                this.isZoomIn=!this.isZoomIn;
+                if (document.exitFullscreen) {
+                document.exitFullscreen();
+                } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen()
+                } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen()
+                } else if (document.msExitFullscreen) {
+                document.msExitFullscreen()
+                }
+            } else {
+                this.isZoomIn=!this.isZoomIn;
+                if (element.requestFullscreen) {
+                element.requestFullscreen()
+                } else if (element.webkitRequestFullScreen) {
+                element.webkitRequestFullScreen()
+                } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen()
+                } else if (element.msRequestFullscreen) {
+                // IE11
+                element.msRequestFullscreen()
+                }
+            }
+            console.log(this.isZoomIn)
+            this.fullscreen = !this.fullscreen
+        },
+
   },
   mounted() {
     this.drawChart();
+    this.$nextTick(() => {
+      let WindowBrowerHeight = window.innerHeight
+      if (this.WindowScreenHeight == WindowBrowerHeight) {
+         this.fullscreen = true
+      } else {
+         this.fullscreen = false
+      }
+  });
   },
 };
 </script>
@@ -519,12 +636,16 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 #button1 {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-#inlineForm {
-  margin-top: 50px;
+.zoomIn{
+    width:  200%;
+    height: 200%;
+    transition: all 0.5s;
 }
+
 </style> 
