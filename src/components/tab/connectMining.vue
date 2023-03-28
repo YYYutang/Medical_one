@@ -61,9 +61,14 @@
         </el-form>
       </div>
       <div id="charts1" v-show="showChart">
-        <el-card shadow="hover" id="card1" class="zoomOut" :class="{
-        'zoomIn':isZoomIn
-        }">
+        <el-card
+          shadow="hover"
+          id="card1"
+          class="zoomOut"
+          :class="{
+            zoomIn: isZoomIn,
+          }"
+        >
           <div id="inlineForm">
             <el-form
               :inline="true"
@@ -73,7 +78,7 @@
               <el-form-item>
                 <el-tooltip
                   effect="dark"
-                  :content="fullscreen ? `缩小` : `放大`"
+                  :content="fullScreen ? `缩小` : `放大`"
                   placement="bottom"
                 >
                   <i
@@ -87,9 +92,10 @@
                   v-model="formInline.value3"
                   placeholder="请选择"
                   style="width: 100px"
+                  @change="drawChart"
                 >
                   <el-option
-                    v-for="item in chartOneOptionsOne"
+                    v-for="item in diseaseOptions"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -102,9 +108,10 @@
                   v-model="formInline.value4"
                   placeholder="请选择"
                   style="width: 100px"
+                  @change="drawChart"
                 >
                   <el-option
-                    v-for="item in chartOneOptionsTwo"
+                    v-for="item in diseaseInOptions"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -117,9 +124,10 @@
                   v-model="formInline.value5"
                   placeholder="请选择"
                   style="width: 100px"
+                  @change="drawChart"
                 >
                   <el-option
-                    v-for="item in chartOneOptionsOne"
+                    v-for="item in diseaseOptions"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -132,9 +140,10 @@
                   v-model="formInline.value6"
                   placeholder="请选择"
                   style="width: 100px"
+                  @change="drawChart"
                 >
                   <el-option
-                    v-for="item in chartOneOptionsTwo"
+                    v-for="item in diseaseInOptions"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -150,8 +159,11 @@
             v-show="showChart"
           ></div>
         </el-card>
-        <el-card shadow="hover" @click="fullScreen" id="card2">
-          <i class="el-icon-full-screen" v-on:click="handleFullScreen('card2')"></i>
+        <el-card shadow="hover" id="card2">
+          <i
+            class="el-icon-full-screen"
+            v-on:click="handleFullScreen('card2')"
+          ></i>
           <div
             id="chart2"
             style="width: 800px; height: 400px"
@@ -160,20 +172,24 @@
         </el-card>
       </div>
       <div id="charts2" v-show="showChart">
-        <el-card shadow="hover" @click="fullScreen" id="card3">
+        <el-card shadow="hover" id="card3">
           <div id="formInLine2">
             <el-form :inline="true" :model="formInline2">
               <el-form-item>
-                <i class="el-icon-full-screen" v-on:click="handleFullScreen('card3')"></i>
+                <i
+                  class="el-icon-full-screen"
+                  v-on:click="handleFullScreen('card3')"
+                ></i>
               </el-form-item>
               <el-form-item label="病种">
                 <el-select
                   v-model="formInline2.value"
                   placeholder="请选择"
                   style="width: 100px"
+                   @change="drawChart"
                 >
                   <el-option
-                    v-for="item in chartOneOptionsOne"
+                    v-for="item in diseaseOptions"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -186,9 +202,10 @@
                   v-model="formInline2.value2"
                   placeholder="请选择"
                   style="width: 100px"
+                   @change="drawChart"
                 >
                   <el-option
-                    v-for="item in chartOneOptionsTwo"
+                    v-for="item in diseaseInOptions"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -200,8 +217,11 @@
           </div>
           <div id="chart3" style="width: 600px; height: 400px"></div>
         </el-card>
-        <el-card shadow="hover" @click="fullScreen"  id="card4">
-          <i class="el-icon-full-screen" v-on:click="handleFullScreen('card4')"></i>
+        <el-card shadow="hover" id="card4">
+          <i
+            class="el-icon-full-screen"
+            v-on:click="handleFullScreen('card4')"
+          ></i>
           <div id="chart4" style="width: 600px; height: 400px"></div>
         </el-card>
       </div>
@@ -219,130 +239,72 @@ export default {
         description: "",
         model: "",
       },
-      fullScreen:false,
-      isZoomIn:false,
+      fullScreen: false,
+      isZoomIn: false,
       diseaseOptions: [
         {
-          value: "选项1",
+          value: "高血压",
           label: "高血压",
         },
         {
-          value: "选项2",
+          value: "糖尿病",
           label: "糖尿病",
         },
         {
-          value: "选项3",
+          value: "肺癌",
           label: "肺癌",
         },
         {
-          value: "选项4",
+          value: "胃癌",
           label: "胃癌",
         },
         {
-          value: "选项5",
+          value: "阿尔兹海默症",
           label: "阿尔兹海默症",
         },
       ],
       diseaseInOptions: [
         {
-          value: "选项1",
+          value: "血脂",
           label: "血脂",
         },
         {
-          value: "选项2",
+          value: "血压",
           label: "血压",
         },
         {
-          value: "选项3",
+          value: "血糖",
           label: "血糖",
         },
         {
-          value: "选项4",
+          value: "年龄",
           label: "年龄",
         },
       ],
-      chartOneOptionsOne: [
-        {
-          value: "选项1",
-          label: "黄金糕",
-        },
-        {
-          value: "选项2",
-          label: "双皮奶",
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎",
-        },
-        {
-          value: "选项4",
-          label: "龙须面",
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭",
-        },
-      ],
-      chartOneOptionsTwo: [
-        {
-          value: "选项1",
-          label: "黄金糕",
-        },
-        {
-          value: "选项2",
-          label: "双皮奶",
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎",
-        },
-        {
-          value: "选项4",
-          label: "龙须面",
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭",
-        },
-      ],
+
       value1: [],
       value2: [],
       formInline: { value3: "", value4: "", value5: "", value6: "" },
       formInline2: { value: "", value2: "" },
-    };
-  },
-  methods: {
-    goBack() {
-      console.log("go back");
-    },
-    onSubmit() {
-      console.log("submit!");
-    },
-    onSubmitDM() {
-      this.showForm = !this.showForm;
-      this.showChart = !this.showChart;
-    },
-
-    drawChart() {
-      // 基于准备好的dom，初始化echarts实例  这个和上面的main对应
-      let myChart1 = this.$echarts.init(document.getElementById("chart1"));
-      let myChart2 = this.$echarts.init(document.getElementById("chart2"));
-      let myChart3 = this.$echarts.init(document.getElementById("chart3"));
-      let myChart4 = this.$echarts.init(document.getElementById("chart4"));
-      // 指定图表的配置项和数据
-      //散点图
-      let option1 = {
-        title: {
-          text: "散点图",
-          left: "center",
-        },
-        xAxis: {},
-        yAxis: {},
-        color: "#75AAF2",
-        series: [
-          {
-            symbolSize: 20,
-            data: [
+      barData: [
+        { value: 1048, name: "0-20" },
+        { value: 735, name: "20-30" },
+        { value: 580, name: "30-40" },
+        { value: 484, name: "40-50" },
+        { value: 300, name: "50-60" },
+        { value: 200, name: "60-70" },
+        { value: 121, name: "70-80" },
+      ],
+      barData2: [
+        { value: 100, name: "60-65" },
+        { value: 89, name: "65-70" },
+        { value: 76, name: "75-80" },
+        { value: 78, name: "85-90" },
+        { value: 128, name: "95-100" },
+        { value: 113, name: "105-110" },
+        { value: 105, name: "110-115" },
+      ],
+      dotData:[
               [10.0, 8.04],
               [8.07, 6.95],
               [13.0, 7.58],
@@ -366,6 +328,70 @@ export default {
               [7.08, 5.82],
               [5.02, 5.68],
             ],
+      dotData2:[
+              [8.07, 6.95],
+              [13.0, 7.58],
+              [9.05, 8.81],
+              [11.0, 8.33],
+              [14.0, 7.66],
+              [13.4, 6.81],
+              [10.0, 6.33],
+              [14.0, 8.96],
+              [12.5, 6.82],
+              [9.15, 7.2],
+              [11.5, 7.2],
+              [3.03, 4.23],
+              [12.2, 7.83],
+              [7.08, 5.82],
+              [5.02, 5.68],
+      ],
+      myChart1:{},
+      myChart2:{},
+      myChart3:{},
+      myChart4:{},
+    };
+  },
+  methods: {
+    goBack() {
+      console.log("go back");
+    },
+    onSubmit() {
+      console.log("submit!");
+    },
+    onSubmitDM() {
+      this.showForm = !this.showForm;
+      this.showChart = !this.showChart;
+    },
+
+    drawChart() {
+      // 基于准备好的dom，初始化echarts实例  这个和上面的main对应
+      this.myChart1 = this.$echarts.init(document.getElementById("chart1"));
+      this.myChart2 = this.$echarts.init(document.getElementById("chart2"));
+      this.myChart3 = this.$echarts.init(document.getElementById("chart3"));
+      this.myChart4 = this.$echarts.init(document.getElementById("chart4"));
+      // 指定图表的配置项和数据
+      //散点图
+       let tempData2=null;
+      if(this.formInline.value3==='高血压'&&this.formInline.value4==='血压'&&this.formInline.value5==='糖尿病'&&this.formInline.value6==='血糖'){
+        tempData2=this.dotData;
+
+      }
+      if(this.formInline.value3==='高血压'&&this.formInline.value4==='血脂'&&this.formInline.value5==='肺癌'&&this.formInline.value6==='年龄'){
+        tempData2=this.dotData2;
+
+      }
+      let option1 = {
+        title: {
+          text: "散点图",
+          left: "center",
+        },
+        xAxis: {},
+        yAxis: {},
+        color: "#75AAF2",
+        series: [
+          {
+            symbolSize: 20,
+            data: tempData2,
             type: "scatter",
           },
         ],
@@ -438,6 +464,16 @@ export default {
         ],
       };
       //饼状图
+      let tempData=null;
+      console.log(this.formInline2)
+      if(this.formInline2.value==='高血压'&&this.formInline2.value2==='血压'){
+        tempData=this.barData;
+        console.log(tempData)
+      }
+      if(this.formInline2.value==='高血压'&&this.formInline2.value2==='血脂'){
+        tempData=this.barData2;
+        console.log(tempData)
+      }
       let option3 = {
         title: {
           text: "饼状分布图",
@@ -456,15 +492,7 @@ export default {
             name: "数据分布图",
             type: "pie",
             radius: "50%",
-            data: [
-              { value: 1048, name: "0-20" },
-              { value: 735, name: "20-30" },
-              { value: 580, name: "30-40" },
-              { value: 484, name: "40-50" },
-              { value: 300, name: "50-60" },
-              { value: 200, name: "60-70" },
-              { value: 121, name: "70-80" },
-            ],
+            data: tempData,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
@@ -579,53 +607,51 @@ export default {
         ],
       };
       // 使用刚指定的配置项和数据显示图表。
-      myChart1.setOption(option1);
-      myChart2.setOption(option2);
-      myChart3.setOption(option3);
-      myChart4.setOption(option4);
+      this.myChart1.setOption(option1);
+      this.myChart2.setOption(option2);
+      this.myChart3.setOption(option3);
+      this.myChart4.setOption(option4);
     },
     handleFullScreen(id) {
-            //   let element = document.documentElement   //全屏容器
-            let element = document.getElementById(id); //需要全屏容器的id
-            if (this.fullscreen) {
-                this.isZoomIn=!this.isZoomIn;
-                if (document.exitFullscreen) {
-                document.exitFullscreen();
-                } else if (document.webkitCancelFullScreen) {
-                document.webkitCancelFullScreen()
-                } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen()
-                } else if (document.msExitFullscreen) {
-                document.msExitFullscreen()
-                }
-            } else {
-                this.isZoomIn=!this.isZoomIn;
-                if (element.requestFullscreen) {
-                element.requestFullscreen()
-                } else if (element.webkitRequestFullScreen) {
-                element.webkitRequestFullScreen()
-                } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen()
-                } else if (element.msRequestFullscreen) {
-                // IE11
-                element.msRequestFullscreen()
-                }
-            }
-            console.log(this.isZoomIn)
-            this.fullscreen = !this.fullscreen
-        },
+      //   let element = document.documentElement   //全屏容器
+      let element = document.getElementById(id); //需要全屏容器的id
+      if (this.fullscreen) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      } else {
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if (element.webkitRequestFullScreen) {
+          element.webkitRequestFullScreen();
+        } else if (element.mozRequestFullScreen) {
+          element.mozRequestFullScreen();
+        } else if (element.msRequestFullscreen) {
+          // IE11
+          element.msRequestFullscreen();
+        }
+      }
+      console.log(this.fullscreen);
+      this.fullscreen = !this.fullscreen;
+    },
 
   },
   mounted() {
     this.drawChart();
     this.$nextTick(() => {
-      let WindowBrowerHeight = window.innerHeight
+      let WindowBrowerHeight = window.innerHeight;
       if (this.WindowScreenHeight == WindowBrowerHeight) {
-         this.fullscreen = true
+        this.fullscreen = true;
       } else {
-         this.fullscreen = false
+        this.fullscreen = false;
       }
-  });
+    });
   },
 };
 </script>
@@ -642,10 +668,9 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.zoomIn{
-    width:  200%;
-    height: 200%;
-    transition: all 0.5s;
+.zoomIn {
+  width: 200%;
+  height: 200%;
+  transition: all 0.5s;
 }
-
 </style> 

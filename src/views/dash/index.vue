@@ -7,11 +7,15 @@
             <span class="lineStyle">▍</span><span>快捷入口</span>
           </div>
           <div class="quickEntryBox">
-            <div v-for="(item,index) in fakeEntry" :key="index">
-              <div class="singleBox" @click="test(index)"><img src="../../assets/logo.png" class="imgStyle">
-                <div style="text-align: center">{{item}}</div>
+            <div v-for="(item, index) in quickEntry" :key="index">
+              <div class="singleBox" @click="quickLink(index)">
+                <img
+                  :src="item.img"
+                  class="imgStyle"
+                  style="border-radius: 15px"
+                />
+                <div style="text-align: center">{{ item.title }}</div>
               </div>
-
             </div>
           </div>
         </el-card>
@@ -22,96 +26,240 @@
             <span class="lineStyle">▍</span><span>系统模型信息</span>
           </div>
           <!--            画图容器-->
-          <div id="entry" style="height: 150px;"></div>
+          <el-table :data="tableData" stripe style="width: 100%">
+            <el-table-column prop="modelid" label="模型id" width="180">
+            </el-table-column>
+            <el-table-column prop="modelname" label="模型名称" width="180">
+            </el-table-column>
+            <el-table-column prop="type" label="算法类型"> </el-table-column>
+            <el-table-column prop="time" label="模型预测次数">
+            </el-table-column>
+          </el-table>
         </el-card>
       </div>
     </div>
     <div class="bottomBigDiv">
-      <div class="left">1</div>
-      <div class="mid">2</div>
-      <div class="right">3</div>
+      <div class="left">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span class="lineStyle">▍</span><span>数据统计</span>
+          </div>
+          <div
+            v-for="(item, index) in diseaseData"
+            :key="index"
+            style="margin-top: 10px"
+          >
+            <div style="text-align: center">
+              <span>{{ item.name }}</span>
+              <el-progress
+                :text-inside="true"
+                :stroke-width="28"
+                :percentage="(item.num * 100) / patientNum"
+                style="margin-top: 10px"
+              ></el-progress>
+            </div>
+          </div>
+        </el-card>
+      </div>
+      <div class="mid">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span class="lineStyle">▍</span><span>系统登录情况</span>
+          </div>
+          <div id="login" style="width: 500px;height:400px;"></div>
+        </el-card>
+      </div>
+      <div class="right">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span class="lineStyle">▍</span><span>系统数据信息</span>
+          </div>
+          <el-table :data="tableData2" stripe style="width: 100%">
+            <el-table-column prop="dataname" label="数据表" width="100">
+            </el-table-column>
+            <el-table-column prop="datasource" label="数据来源" width="180">
+            </el-table-column>
+            <el-table-column prop="datasize" label="存储大小"> </el-table-column>
+            <el-table-column prop="datafrom" label="创建人">
+            </el-table-column>
+          </el-table>
+        </el-card>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import {Line} from "@antv/g2plot";
-
 export default {
   name: "index",
   data() {
     return {
-      fakeData : [{
-        "Date": "2010-01",
-        "scales": 1998
-      },
+      mychart:{},
+      tableData: [
         {
-          "Date": "2010-02",
-          "scales": 1850
+          modelid: 1,
+          modelname: "KNN",
+          type: "分类",
+          time: 6,
         },
         {
-          "Date": "2010-03",
-          "scales": 1720
+          modelid: 2,
+          modelname: "随机森林",
+          type: "分类",
+          time: 4,
         },
         {
-          "Date": "2010-04",
-          "scales": 1818
+          modelid: 3,
+          modelname: "xgboost",
+          type: "分类",
+          time: 3,
+        },
+      ],
+      tableData2:[
+        {
+          dataname:'data01',
+          datasource:'txt',
+          datasize:'11MB',
+          datafrom:'xx',
+        },
+{
+          dataname:'data02',
+          datasource:'csv',
+          datasize:'231MB',
+          datafrom:'xx',
         },
         {
-          "Date": "2010-05",
-          "scales": 1920
-        }],
+          dataname:'data03',
+          datasource:'mysql',
+          datasize:'555kB',
+          datafrom:'xxx',
+        },
+        {
+          dataname:'data04',
+          datasource:'mysql',
+          datasize:'1.3GB',
+          datafrom:'xx',
+        },
+        {
+          dataname:'data05',
+          datasource:'mysql',
+          datasize:'22MB',
+          datafrom:'xx',
+        }
+      ],
       line: null,
-      fakeEntry: ['数据表管理','模型管理','多病种关联关系挖掘','疾病预测','其他功能']
-    }
+      patientNum: 200,
+      quickEntry: [
+        {
+          title: "数据表管理",
+          img: require("../../assets/dataManage.png"),
+          router: "/dataManage",
+        },
+        {
+          title: "模型管理",
+          img: require("../../assets/ModelManage.png"),
+          router: "/modelManage",
+        },
+        {
+          title: "多病种关联关系挖掘",
+          img: require("../../assets/mutipile.png"),
+          router: "/connectMining",
+        },
+        {
+          title: "疾病预测",
+          img: require("../../assets/feiai.png"),
+          router: "/dangePredict",
+        },
+        { title: "其他功能", img: require("../../assets/other.png") },
+      ],
+      diseaseData: [
+        {
+          name: "胃癌",
+          num: 30,
+        },
+        {
+          name: "糖尿病",
+          num: 23,
+        },
+        {
+          name: "肺癌",
+          num: 56,
+        },
+        {
+          name: "乳腺癌",
+          num: 12,
+        },
+        {
+          name: "高血压",
+          num: 22,
+        },
+      ],
+    };
   },
   methods: {
-    initFakeGraph() {
-      this.line = new Line('entry', {
-        data : this.fakeData,
-        padding: 'auto',
-        xField: 'Date',
-        yField: 'scales',
-        xAxis: {
-          // type: 'timeCat',
-          tickCount: 5,
-        },
-      });
-
-      this.line.render();
+    quickLink(index) {
+      console.log(this.quickEntry[index].router);
+      this.$router.replace(this.quickEntry[index].router);
     },
-    test(index) {
-      this.$message.success(`点到我了,我是第${index + 1}个`)
-    }
+    chart1() {
+      var chartDom = document.getElementById('login');
+      this.mychart = this.$echarts.init(chartDom);
+
+      var option;
+      option = {
+        xAxis: {
+          type: "category",
+          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        },
+        yAxis: {
+          type: "value",
+        },
+        series: [
+          {
+            data: [120, 200, 150, 80, 70, 110, 130],
+            type: "bar",
+            showBackground: true,
+            color:" #75AAF2",
+            backgroundStyle: {
+              color: "rgba(180, 180, 180, 0.2)",
+            },
+          },
+        ],
+      };
+
+      option && this.mychart.setOption(option);
+    },
   },
   mounted() {
-    this.initFakeGraph()
-  }
-}
+    this.chart1();
+    const that=this;
+    this.mychart.resize();
+    window.addEventListener('resize',()=>{
+      that.mychart.resize()
+    })
+  },
+};
 </script>
 
 <style scoped>
-.topBigDiv{
-  border: 1px red solid;
+.topBigDiv {
   box-sizing: border-box;
   height: 30vh;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.topBigDiv .left{
-  border: 1px red solid;
+.topBigDiv .left {
   box-sizing: border-box;
   width: 49%;
   height: 100%;
 }
-.topBigDiv .right{
-  border: 1px red solid;
+.topBigDiv .right {
   box-sizing: border-box;
   width: 49%;
   height: 100%;
 }
-.topBigDiv .left .quickEntryBox{
+.topBigDiv .left .quickEntryBox {
   /*border: 1px red solid;*/
   /*box-sizing: border-box;*/
   width: 100%;
@@ -120,19 +268,18 @@ export default {
   justify-content: space-evenly;
   align-items: center;
 }
-.topBigDiv .left .quickEntryBox .singleBox{
+.topBigDiv .left .quickEntryBox .singleBox {
   /*border: 1px red solid;*/
   /*box-sizing: border-box;*/
   width: 80px;
   height: 80px;
   border-radius: 20%;
 }
-.topBigDiv .left .quickEntryBox .imgStyle{
+.topBigDiv .left .quickEntryBox .imgStyle {
   width: 90%;
   height: 90%;
 }
-.bottomBigDiv{
-  border: 1px blue solid;
+.bottomBigDiv {
   box-sizing: border-box;
   height: 55vh;
   display: flex;
@@ -140,20 +287,17 @@ export default {
   align-items: center;
   margin-top: 10px;
 }
-.bottomBigDiv .left{
-  border: 1px blue solid;
+.bottomBigDiv .left {
   box-sizing: border-box;
   height: 100%;
   width: 33%;
 }
-.bottomBigDiv .mid{
-  border: 1px blue solid;
+.bottomBigDiv .mid {
   box-sizing: border-box;
   height: 100%;
   width: 33%;
 }
-.bottomBigDiv .right{
-  border: 1px blue solid;
+.bottomBigDiv .right {
   box-sizing: border-box;
   height: 100%;
   width: 33%;
@@ -164,15 +308,14 @@ export default {
   content: "";
 }
 .clearfix:after {
-  clear: both
+  clear: both;
 }
 .lineStyle {
-  color: blue;
+  color: rgb(100, 172, 231);
   font-weight: 40;
 }
-.card{
+.card {
   padding: 0;
-  border: 1px grey solid;
   height: 100%;
 }
 </style>
