@@ -64,7 +64,7 @@
         <el-card
           shadow="hover"
           id="card1"
-          class="zoomOut"
+          class="zoomOut chart-center"
           :class="{
             zoomIn: isZoomIn,
           }"
@@ -74,6 +74,7 @@
               :inline="true"
               :model="formInline"
               class="demo-form-inline"
+              v-show="showForm2"
             >
               <el-form-item>
                 <el-tooltip
@@ -93,6 +94,7 @@
                   placeholder="请选择"
                   style="width: 100px"
                   @change="drawChart"
+                      :popper-append-to-body="false"
                 >
                   <el-option
                     v-for="item in diseaseOptions"
@@ -109,6 +111,7 @@
                   placeholder="请选择"
                   style="width: 100px"
                   @change="drawChart"
+                      :popper-append-to-body="false"
                 >
                   <el-option
                     v-for="item in diseaseInOptions"
@@ -125,6 +128,7 @@
                   placeholder="请选择"
                   style="width: 100px"
                   @change="drawChart"
+                      :popper-append-to-body="false"
                 >
                   <el-option
                     v-for="item in diseaseOptions"
@@ -141,6 +145,7 @@
                   placeholder="请选择"
                   style="width: 100px"
                   @change="drawChart"
+                      :popper-append-to-body="false"
                 >
                   <el-option
                     v-for="item in diseaseInOptions"
@@ -159,7 +164,7 @@
             v-show="showChart"
           ></div>
         </el-card>
-        <el-card shadow="hover" id="card2">
+        <el-card shadow="hover" id="card2" class="chart-center">
           <i
             class="el-icon-full-screen"
             v-on:click="handleFullScreen('card2')"
@@ -172,9 +177,9 @@
         </el-card>
       </div>
       <div id="charts2" v-show="showChart">
-        <el-card shadow="hover" id="card3">
+        <el-card shadow="hover" id="card3" class="chart-center">
           <div id="formInLine2">
-            <el-form :inline="true" :model="formInline2">
+            <el-form :inline="true" :model="formInline2" v-show="showForm3">
               <el-form-item>
                 <i
                   class="el-icon-full-screen"
@@ -186,7 +191,8 @@
                   v-model="formInline2.value"
                   placeholder="请选择"
                   style="width: 100px"
-                   @change="drawChart"
+                  @change="drawChart"
+                  :popper-append-to-body="false"
                 >
                   <el-option
                     v-for="item in diseaseOptions"
@@ -202,7 +208,8 @@
                   v-model="formInline2.value2"
                   placeholder="请选择"
                   style="width: 100px"
-                   @change="drawChart"
+                  @change="drawChart"
+                  :popper-append-to-body="false"
                 >
                   <el-option
                     v-for="item in diseaseInOptions"
@@ -217,7 +224,7 @@
           </div>
           <div id="chart3" style="width: 600px; height: 400px"></div>
         </el-card>
-        <el-card shadow="hover" id="card4">
+        <el-card shadow="hover" id="card4" class="chart-center">
           <i
             class="el-icon-full-screen"
             v-on:click="handleFullScreen('card4')"
@@ -238,6 +245,9 @@ export default {
         name: "",
         description: "",
         model: "",
+      },
+      isFull: {
+        ok: false,
       },
       fullScreen: false,
       isZoomIn: false,
@@ -286,6 +296,8 @@ export default {
       value2: [],
       formInline: { value3: "", value4: "", value5: "", value6: "" },
       formInline2: { value: "", value2: "" },
+      showForm2: true,
+      showForm3: true,
       barData: [
         { value: 1048, name: "0-20" },
         { value: 735, name: "20-30" },
@@ -304,51 +316,51 @@ export default {
         { value: 113, name: "105-110" },
         { value: 105, name: "110-115" },
       ],
-      dotData:[
-              [10.0, 8.04],
-              [8.07, 6.95],
-              [13.0, 7.58],
-              [9.05, 8.81],
-              [11.0, 8.33],
-              [14.0, 7.66],
-              [13.4, 6.81],
-              [10.0, 6.33],
-              [14.0, 8.96],
-              [12.5, 6.82],
-              [9.15, 7.2],
-              [11.5, 7.2],
-              [3.03, 4.23],
-              [12.2, 7.83],
-              [2.02, 4.47],
-              [1.05, 3.33],
-              [4.05, 4.96],
-              [6.03, 7.24],
-              [12.0, 6.26],
-              [12.0, 8.84],
-              [7.08, 5.82],
-              [5.02, 5.68],
-            ],
-      dotData2:[
-              [8.07, 6.95],
-              [13.0, 7.58],
-              [9.05, 8.81],
-              [11.0, 8.33],
-              [14.0, 7.66],
-              [13.4, 6.81],
-              [10.0, 6.33],
-              [14.0, 8.96],
-              [12.5, 6.82],
-              [9.15, 7.2],
-              [11.5, 7.2],
-              [3.03, 4.23],
-              [12.2, 7.83],
-              [7.08, 5.82],
-              [5.02, 5.68],
+      dotData: [
+        [10.0, 8.04],
+        [8.07, 6.95],
+        [13.0, 7.58],
+        [9.05, 8.81],
+        [11.0, 8.33],
+        [14.0, 7.66],
+        [13.4, 6.81],
+        [10.0, 6.33],
+        [14.0, 8.96],
+        [12.5, 6.82],
+        [9.15, 7.2],
+        [11.5, 7.2],
+        [3.03, 4.23],
+        [12.2, 7.83],
+        [2.02, 4.47],
+        [1.05, 3.33],
+        [4.05, 4.96],
+        [6.03, 7.24],
+        [12.0, 6.26],
+        [12.0, 8.84],
+        [7.08, 5.82],
+        [5.02, 5.68],
       ],
-      myChart1:{},
-      myChart2:{},
-      myChart3:{},
-      myChart4:{},
+      dotData2: [
+        [8.07, 6.95],
+        [13.0, 7.58],
+        [9.05, 8.81],
+        [11.0, 8.33],
+        [14.0, 7.66],
+        [13.4, 6.81],
+        [10.0, 6.33],
+        [14.0, 8.96],
+        [12.5, 6.82],
+        [9.15, 7.2],
+        [11.5, 7.2],
+        [3.03, 4.23],
+        [12.2, 7.83],
+        [7.08, 5.82],
+        [5.02, 5.68],
+      ],
+      myChart1: {},
+      myChart2: {},
+      myChart3: {},
+      myChart4: {},
     };
   },
   methods: {
@@ -371,14 +383,22 @@ export default {
       this.myChart4 = this.$echarts.init(document.getElementById("chart4"));
       // 指定图表的配置项和数据
       //散点图
-       let tempData2=null;
-      if(this.formInline.value3==='高血压'&&this.formInline.value4==='血压'&&this.formInline.value5==='糖尿病'&&this.formInline.value6==='血糖'){
-        tempData2=this.dotData;
-
+      let tempData2 = null;
+      if (
+        this.formInline.value3 === "高血压" &&
+        this.formInline.value4 === "血压" &&
+        this.formInline.value5 === "糖尿病" &&
+        this.formInline.value6 === "血糖"
+      ) {
+        tempData2 = this.dotData;
       }
-      if(this.formInline.value3==='高血压'&&this.formInline.value4==='血脂'&&this.formInline.value5==='肺癌'&&this.formInline.value6==='年龄'){
-        tempData2=this.dotData2;
-
+      if (
+        this.formInline.value3 === "高血压" &&
+        this.formInline.value4 === "血脂" &&
+        this.formInline.value5 === "肺癌" &&
+        this.formInline.value6 === "年龄"
+      ) {
+        tempData2 = this.dotData2;
       }
       let option1 = {
         title: {
@@ -464,15 +484,21 @@ export default {
         ],
       };
       //饼状图
-      let tempData=null;
-      console.log(this.formInline2)
-      if(this.formInline2.value==='高血压'&&this.formInline2.value2==='血压'){
-        tempData=this.barData;
-        console.log(tempData)
+      let tempData = null;
+      console.log(this.formInline2);
+      if (
+        this.formInline2.value === "高血压" &&
+        this.formInline2.value2 === "血压"
+      ) {
+        tempData = this.barData;
+        console.log(tempData);
       }
-      if(this.formInline2.value==='高血压'&&this.formInline2.value2==='血脂'){
-        tempData=this.barData2;
-        console.log(tempData)
+      if (
+        this.formInline2.value === "高血压" &&
+        this.formInline2.value2 === "血脂"
+      ) {
+        tempData = this.barData2;
+        console.log(tempData);
       }
       let option3 = {
         title: {
@@ -612,10 +638,37 @@ export default {
       this.myChart3.setOption(option3);
       this.myChart4.setOption(option4);
     },
+    resizeChart(id, stand) {
+      switch (id) {
+        case "card1":
+          this.myChart1.resize(
+            stand ? { width: 900, height: 600 } : { width: 600, height: 400 }
+          );
+          break;
+        case "card2":
+          this.myChart2.resize(
+            stand ? { width: 1200, height: 600 } : { width: 800, height: 400 }
+          );
+          break;
+        case "card3":
+          this.myChart3.resize(
+            stand ? { width: 900, height: 600 } : { width: 600, height: 400 }
+          );
+          break;
+        case "card4":
+          this.myChart4.resize(
+            stand ? { width: 900, height: 600 } : { width: 600, height: 400 }
+          );
+          break;
+        default:
+          return;
+      }
+    },
     handleFullScreen(id) {
       //   let element = document.documentElement   //全屏容器
       let element = document.getElementById(id); //需要全屏容器的id
-      if (this.fullscreen) {
+      this.resizeChart(id, !this.isFull.ok);
+      if (this.isFull.ok) {
         if (document.exitFullscreen) {
           document.exitFullscreen();
         } else if (document.webkitCancelFullScreen) {
@@ -626,6 +679,7 @@ export default {
           document.msExitFullscreen();
         }
       } else {
+
         if (element.requestFullscreen) {
           element.requestFullscreen();
         } else if (element.webkitRequestFullScreen) {
@@ -637,10 +691,9 @@ export default {
           element.msRequestFullscreen();
         }
       }
-      console.log(this.fullscreen);
+      this.$set(this.isFull, "ok", !this.isFull.ok);
       this.fullscreen = !this.fullscreen;
     },
-
   },
   mounted() {
     this.drawChart();
@@ -652,6 +705,29 @@ export default {
         this.fullscreen = false;
       }
     });
+
+    const initChart = () => {
+      this.myChart1.resize({ width: 600, height: 400 });
+      this.myChart2.resize({ width: 800, height: 400 });
+      this.myChart3.resize({ width: 600, height: 400 });
+      this.myChart4.resize({ width: 600, height: 400 });
+    };
+    const checkFull = () => {
+      let isFull =
+        document.fullscreenElement ||
+        document.mozFullScreenElement ||
+        document.webkitFullscreenElement;
+      if (isFull === undefined) isFull = false;
+      return isFull;
+    };
+    const flag = this;
+    window.onresize = function () {
+      const fullDom = checkFull();
+      if (!fullDom) {
+        initChart();
+        flag.$set(flag.isFull, "ok", false);
+      }
+    };
   },
 };
 </script>
@@ -672,5 +748,11 @@ export default {
   width: 200%;
   height: 200%;
   transition: all 0.5s;
+}
+
+.chart-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style> 
