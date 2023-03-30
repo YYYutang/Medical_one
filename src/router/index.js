@@ -8,6 +8,7 @@ import connectMining from "@/components/tab/connectMining.vue";
 import dangePredict from "@/components/tab/dangePredict.vue";
 import dataManage from "@/components/tab/dataManage.vue";
 import modelManage from "@/components/tab/modelManage.vue"
+import importModel from "@/components/tab/importModel";
 Vue.use(VueRouter)
 
 const routes = [
@@ -48,6 +49,11 @@ const routes = [
           path:'/modelManage',
           name:'modelManage',
           component:modelManage,
+        },
+        {
+          path:'/importModel',
+          name:'importModel',
+          component:importModel,
         }
       ]
       },
