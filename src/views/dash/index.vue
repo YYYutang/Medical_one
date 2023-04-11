@@ -74,13 +74,13 @@
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>系统数据信息</span>
           </div>
-          <el-table :data="tableData2" stripe style="width: 100%">
-            <el-table-column prop="dataname" label="数据表" width="100">
+          <el-table :data="tableData2" stripe style="width: 100%"   height="400">
+            <el-table-column prop="tableName" label="数据表" width="100">
             </el-table-column>
-            <el-table-column prop="datasource" label="数据来源" width="180">
+            <el-table-column prop="tableOrigin" label="数据来源" width="180">
             </el-table-column>
-            <el-table-column prop="datasize" label="存储大小"> </el-table-column>
-            <el-table-column prop="datafrom" label="创建人">
+            <el-table-column prop="tableSize" label="存储大小"> </el-table-column>
+            <el-table-column prop="tableDate" label="创建时间">
             </el-table-column>
           </el-table>
         </el-card>
@@ -90,6 +90,8 @@
 </template>
 
 <script>
+import { getRequest } from '@/utils/api';
+import storage from '@/utils/storage';
 export default {
   name: "index",
   data() {
@@ -115,38 +117,7 @@ export default {
           time: 3,
         },
       ],
-      tableData2:[
-        {
-          dataname:'data01',
-          datasource:'txt',
-          datasize:'11MB',
-          datafrom:'xx',
-        },
-{
-          dataname:'data02',
-          datasource:'csv',
-          datasize:'231MB',
-          datafrom:'xx',
-        },
-        {
-          dataname:'data03',
-          datasource:'mysql',
-          datasize:'555kB',
-          datafrom:'xxx',
-        },
-        {
-          dataname:'data04',
-          datasource:'mysql',
-          datasize:'1.3GB',
-          datafrom:'xx',
-        },
-        {
-          dataname:'data05',
-          datasource:'mysql',
-          datasize:'22MB',
-          datafrom:'xx',
-        }
-      ],
+      tableData2:[],
       line: null,
       patientNum: 200,
       quickEntry: [
@@ -229,6 +200,28 @@ export default {
 
       option && this.mychart.setOption(option);
     },
+    getAllData(){
+        getRequest("/diabete/getAllData").then((response) => {
+        console.log(response);
+        if (response) {
+          storage.set('allTableData',JSON.stringify(response.data.tableList));
+          this.$store.commit('setAllTableData',storage.get('allTableData'));
+        } else {
+          console.log(response.status);
+        }
+        var tempList=JSON.parse(this.$store.getters.getAllTableData)
+          for (let i = 0; i < tempList.length; i++) {
+            const obj = {
+              tableName: tempList[i].tableName,
+              tableOrigin: tempList[i].tableOrigin,
+              tableSize: tempList[i].tableSize,
+              tableDate: tempList[i].startTime,
+            };
+            this.tableData2.push(obj);
+          }
+      });
+      
+    }
   },
   mounted() {
     this.chart1();
@@ -237,6 +230,7 @@ export default {
     window.addEventListener('resize',()=>{
       that.mychart.resize()
     })
+    this.getAllData();
   },
 };
 </script>

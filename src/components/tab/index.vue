@@ -1,6 +1,6 @@
 <template>
 <div>
-<el-menu :default-active="this.$route.path" class="el-menu-demo" mode="horizontal" @select="handleSelect" router>
+<el-menu :default-active="this.$route.path" class="el-menu-demo" mode="horizontal"  @select="handleSelect" router>
   <el-menu-item index="/dataManage">数据管理</el-menu-item>
   <el-menu-item index="/modelManage">模型管理</el-menu-item>
   <el-menu-item index="/connectMining">多病种关联关系挖掘</el-menu-item>
