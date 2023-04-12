@@ -11,10 +11,7 @@
           <el-step title="基本信息"></el-step>
           <el-step title="选择数据"></el-step>
           <el-step title="选择属性"></el-step>
-          <el-step title="特征抽取"></el-step>
-          <el-step title="模型算法"></el-step>
-          <el-step title="模型预测"></el-step>
-          <el-step title="模型评估"></el-step>
+          <el-step title="算法选择"></el-step>
         </el-steps>
       </div>
       <div id="stepcontain">
@@ -124,129 +121,34 @@
           ref="algoForm"
           label-position="top"
         >
-          <el-form-item label="选择算法模型" prop="selectedData">
+          <el-form-item label="选择算法模型" prop="algoName">
             <el-radio-group
-              v-model="algoForm.formData.selectedData"
+              v-model="algoForm.formData.algoName"
               size="mini"
               prop="selectedData"
             >
               <el-radio
                 v-for="item in algoOptions"
-                :key="item.id"
-                :label="item.id"
+                :key="item.algoName"
+                :label="item.algoName"
                 border
                 >{{ item.algoName }}</el-radio
               >
             </el-radio-group>
           </el-form-item>
-          <el-form-item prop="outputParams" v-model="algoForm.formData.params">
-            <knn v-if="algoForm.formData.selectedData==1"></knn>
+          <el-form-item >
+            <knn v-if="algoForm.formData.selectedData==1" @outputParams='outputParams'></knn>
             <k-means v-if="algoForm.formData.selectedData==2"></k-means>
           </el-form-item>
           <br />
           <el-form-item>
             <el-button @click="stepBack(active)">上一步</el-button>
             <el-button type="primary" @click="submitForm(active)"
-              >下一步</el-button
+              >完成</el-button
             >
           </el-form-item>
         </el-form>
 
-        <!--======================================     模型算法表单    ========================================================-->
-        <el-form
-          class="form"
-          :model="modelAlgoForm.formData"
-          :rules="modelAlgoForm.rules"
-          v-show="modelAlgoForm.isShow"
-          ref="modelAlgoForm"
-          label-position="top"
-        >
-          <el-form-item label="分类模型：">
-            <el-radio-group
-              v-model="modelAlgoForm.formData.classifyMode"
-              size="medium"
-            >
-              <el-radio label="0">逻辑回归二分类</el-radio>
-              <el-radio label="1">贝叶斯二分类</el-radio>
-              <el-radio label="2">决策树</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="回归模型：">
-            <el-radio-group
-              v-model="modelAlgoForm.formData.regressMode"
-              size="medium"
-            >
-              <el-radio label="0">逻辑回归</el-radio>
-              <el-radio label="1">神经网络</el-radio>
-              <el-radio label="2">CART</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="预测模型：">
-            <el-radio-group
-              v-model="modelAlgoForm.formData.predictMode"
-              size="medium"
-            >
-              <el-radio label="0">自回归</el-radio>
-              <el-radio label="1">灰度预测</el-radio>
-              <el-radio label="2">深度学习</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="聚类模型：">
-            <el-radio-group
-              v-model="modelAlgoForm.formData.clusterMode"
-              size="medium"
-            >
-              <el-radio label="0">K-means</el-radio>
-              <el-radio label="1">DIANA</el-radio>
-              <el-radio label="2">谱聚类</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <br />
-          <el-form-item>
-            <el-button @click="stepBack(active)">上一步</el-button>
-            <el-button type="primary" @click="submitForm(active)"
-              >下一步</el-button
-            >
-          </el-form-item>
-        </el-form>
-
-        <!--======================================     模型预测表单     =======================================================-->
-        <el-form
-          class="form"
-          :model="modelForecastForm.formData"
-          :rules="modelForecastForm.rules"
-          v-show="modelForecastForm.isShow"
-          ref="modelForecastForm"
-          label-position="top"
-        >
-          <img src="../../assets/model.png" alt="可视化建模示意图" />
-          <br />
-          <el-form-item style="margin-left: 120px">
-            <el-button @click="stepBack(active)">上一步</el-button>
-            <el-button type="primary" @click="submitForm(active)"
-              >下一步</el-button
-            >
-          </el-form-item>
-        </el-form>
-
-        <!--======================================     模型评估表单      ======================================================-->
-        <el-form
-          id="modelEvaluateForm"
-          :model="modelEvaluateForm.formData"
-          :rules="modelEvaluateForm.rules"
-          v-show="modelEvaluateForm.isShow"
-          ref="modelEvaluateForm"
-          label-position="top"
-        >
-          <img src="../../assets/modelEvaluate.png" alt="模型评估中" />
-          <br />
-          <el-form-item style="margin-left: 200px">
-            <el-button @click="stepBack(active)">上一步</el-button>
-            <router-link to="/modelManage">
-              <el-button type="primary" id="done">完成</el-button>
-            </router-link>
-          </el-form-item>
-        </el-form>
       </div>
 
       <div id="charts">
@@ -305,9 +207,6 @@ export default {
         "dataSelectForm",
         "columnSelectForm",
         "algoForm",
-        "modelAlgoForm",
-        "modelForecastForm",
-        "modelEvaluateForm",
       ],
       active: 0,
       //基本信息-----------------------------------------------------------------------------------------------
@@ -353,7 +252,7 @@ export default {
       algoForm: {
         isShow: false,
         formData: {
-          selectedData: "",
+          algoName: "",
           params:[],
         },
         rules: {
@@ -374,17 +273,7 @@ export default {
         },
       },
 
-      //模型预测-----------------------------------------------------------------------------------------------
-      modelForecastForm: {
-        isShow: false,
-        formData: {},
-      },
 
-      //模型评估-----------------------------------------------------------------------------------------------
-      modelEvaluateForm: {
-        isShow: false,
-        formData: {},
-      },
     };
   },
   methods: {
@@ -496,9 +385,9 @@ export default {
     },
     submitForm(stepIndex) {
       let formName = this.formArray[stepIndex];
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          if (stepIndex < 7) {
+      // this.$refs[formName].validate((valid) => {
+      //   if (valid) {
+          if (stepIndex < 4) {
             this[formName].isShow = false;
             this.active++;
             let nextFormName = this.formArray[++stepIndex];
@@ -516,8 +405,21 @@ export default {
                 }
               );
             }
-            if (this.active == 4){
-              console.log(this.algoForm.dataSelectForm)
+            if(this.active==4){
+              const params={
+                modelName:this.basicInfoForm.modelData.name,
+                modelInfo:this.basicInfoForm.modelData.desc,
+                modelTable:this.dataSelectForm.formData.selectedData,
+                modelColumn:this.columnSelectForm.formData.selectedData,
+                modelAlgo:this.algoForm.formData.selectedData.algoName,
+                modelAlgoParams:this.algoForm.formData.params,
+              }
+              postRequest('',params).then(
+                (response)=>{
+                  console.log(response)
+                }
+
+              );
             }
             console.log(
               "当前表单名字：" +
@@ -534,11 +436,11 @@ export default {
                 this[nextFormName].isShow
             );
           }
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+      //   } else {
+      //     console.log("error submit!!");
+      //     return false;
+      //   }
+      // });
     },
     resetForm(stepIndex) {
       let formName = this.formArray[stepIndex];
@@ -577,6 +479,10 @@ export default {
         this.dataOptions.push(obj);
       }
     },
+    outputParams(value){
+      this.algoForm.formData.params=value;
+      
+    }
   },
   mounted() {
     this.drawChart();

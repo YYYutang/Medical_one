@@ -1,7 +1,7 @@
 <template>
     <div>
         k:
-        <el-input prop= "outputParams" v-model="outputParams[0].knn_inputk" placeholder="请输入k的值" style="width:280px"></el-input>
+        <el-input  v-model="outputParams[0].knn_inputk" placeholder="请输入k的值" style="width:280px" @input="sendparams"></el-input>
     </div>
 </template>
 <script>
@@ -15,8 +15,11 @@ export default ({
             ]
         }
     },
-    props:'outputParams',
     methods:{
+        sendparams(){
+            this.$emit('outputParams',this.outputParams)
+            console.log(this.outputParams)
+        }
 
     },
 })
