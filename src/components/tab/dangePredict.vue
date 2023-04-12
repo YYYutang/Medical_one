@@ -86,25 +86,25 @@
           :model="columnSelectForm.formData"
           :rules="columnSelectForm.rules"
           v-show="columnSelectForm.isShow"
-          ref="columnSelectForm.formData"
+          ref="columnSelectForm"
           label-position="top"
         >
-          <el-form-item label="选择属性列：" prop="selectedColumnData">
-            <el-radio-group
+          <el-form-item label="选择属性列：" prop="selectedData">
+            <el-checkbox-group
               v-model="columnSelectForm.formData.selectedData"
               size="medium"
-              prop="selectedColumnData"
+              prop="selectedData"
             >
               <!--这里key和label要改-->
-              <el-radio
+              <el-checkbox
                 class="radio"
                 v-for="item in dataInOptions"
                 :key="item.columnName"
                 :label="item.columnName"
                 border
-                >{{ item.columnName }}</el-radio
+                >{{ item.columnName }}</el-checkbox
               >
-            </el-radio-group>
+            </el-checkbox-group>
           </el-form-item>
           <br />
           <el-form-item>
@@ -115,47 +115,33 @@
           </el-form-item>
         </el-form>
 
-        <!--======================================     数据处理表单     =======================================================-->
+        <!--======================================     算法选择表单     =======================================================-->
         <el-form
           class="form"
-          :model="dataProcessForm.formData"
-          :rules="dataProcessForm.rules"
-          v-show="dataProcessForm.isShow"
-          ref="dataProcessForm"
+          :model="algoForm.formData"
+          :rules="algoForm.rules"
+          v-show="algoForm.isShow"
+          ref="algoForm"
           label-position="top"
         >
-          <el-form-item label="数据拆分方式：">
+          <el-form-item label="选择算法模型" prop="selectedData">
             <el-radio-group
-              v-model="dataProcessForm.formData.splitMode"
-              size="medium"
-              prop="splitMode"
-              @change="changeSplitMode(dataProcessForm.formData.splitMode)"
+              v-model="algoForm.formData.selectedData"
+              size="mini"
+              prop="selectedData"
             >
-              <el-radio label="proRate">按比例拆分</el-radio>
-              <el-radio label="random">随机拆分</el-radio>
+              <el-radio
+                v-for="item in algoOptions"
+                :key="item.id"
+                :label="item.id"
+                border
+                >{{ item.algoName }}</el-radio
+              >
             </el-radio-group>
           </el-form-item>
-          <el-form-item
-            id="slider"
-            label="训练集占比："
-            v-show="dataProcessForm.sliderShow"
-          >
-            <el-slider
-              v-model="dataProcessForm.formData.splitRate"
-              show-input
-              input-size="mini"
-            >
-            </el-slider>
-          </el-form-item>
-          <el-form-item
-            label="随机拆分种子："
-            v-show="dataProcessForm.randomSeedShow"
-            prop="randomSeed"
-          >
-            <el-input
-              v-model="dataProcessForm.formData.randomSeed"
-              placeholder="请输入拆分种子"
-            ></el-input>
+          <el-form-item prop="outputParams" v-model="algoForm.formData.params">
+            <knn v-if="algoForm.formData.selectedData==1"></knn>
+            <k-means v-if="algoForm.formData.selectedData==2"></k-means>
           </el-form-item>
           <br />
           <el-form-item>
@@ -285,21 +271,40 @@
   </div>
 </template>
 <script>
-import { postRequest,getRequest } from "@/utils/api";
+import { postRequest, getRequest } from "@/utils/api";
+import knn from "@/components/algos/knn.vue";
+
 export default {
+  components:{
+    knn,
+  },
   data() {
     return {
       showForm: true,
       showChart: false,
       dataOptions: [],
       dataInOptions: [],
+      algoOptions: [
+        {
+          id: 1,
+          algoName: "KNN",
+        },
+        {
+          id: 2,
+          algoName: "K-means",
+        },
+        {
+          id: 3,
+          algoName: "SVM",
+        },
+      ],
       value1: [],
       value2: [],
       formArray: [
         "basicInfoForm",
         "dataSelectForm",
         "columnSelectForm",
-        "dataProcessForm",
+        "algoForm",
         "modelAlgoForm",
         "modelForecastForm",
         "modelEvaluateForm",
@@ -335,7 +340,7 @@ export default {
       columnSelectForm: {
         isShow: false,
         formData: {
-          selectedData: "",
+          selectedData: [],
         },
         rules: {
           selectedData: [
@@ -345,18 +350,15 @@ export default {
       },
 
       //数据处理-----------------------------------------------------------------------------------------------
-      dataProcessForm: {
+      algoForm: {
         isShow: false,
-        sliderShow: true,
-        randomSeedShow: false,
         formData: {
-          splitMode: "proRate",
-          splitRate: 50,
-          randomSeed: "null",
+          selectedData: "",
+          params:[],
         },
         rules: {
-          randomSeed: [
-            { required: true, message: "拆分种子不能为空", trigger: "blur" },
+          algoName: [
+            { required: true, message: "请选择一个算法模型", trigger: "blur" },
           ],
         },
       },
@@ -493,10 +495,7 @@ export default {
       myChart3.setOption(option3);
     },
     submitForm(stepIndex) {
-      // console.log(this[formName].formData.name),
-
       let formName = this.formArray[stepIndex];
-
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (stepIndex < 7) {
@@ -505,18 +504,20 @@ export default {
             let nextFormName = this.formArray[++stepIndex];
             this[nextFormName].isShow = true;
             if (this.active == 2) {
-
-              let tableName=this.dataSelectForm.formData
-              getRequest(
-                '/diabete/getAllFiled/'+tableName.selectedData
-              ).then((response) => {
-                for (let i = 0; i < response.data.length; i++) {
-        const obj = {
-          columnName: response.data[i],
-        };
-        this.dataInOptions.push(obj);
-      }
-              });
+              let tableName = this.dataSelectForm.formData;
+              getRequest("/diabete/getAllFiled/" + tableName.selectedData).then(
+                (response) => {
+                  for (let i = 0; i < response.data.length; i++) {
+                    const obj = {
+                      columnName: response.data[i],
+                    };
+                    this.dataInOptions.push(obj);
+                  }
+                }
+              );
+            }
+            if (this.active == 4){
+              console.log(this.algoForm.dataSelectForm)
             }
             console.log(
               "当前表单名字：" +
@@ -549,6 +550,7 @@ export default {
       this.active--;
       let preFormName = this.formArray[--stepIndex];
       this[preFormName].isShow = true;
+      this.dataInOptions = [];
     },
 
     changeSplitMode(splitMode) {
