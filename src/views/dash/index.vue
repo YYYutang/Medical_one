@@ -201,6 +201,7 @@ export default {
       option && this.mychart.setOption(option);
     },
     getAllData(){
+ 
         getRequest("/diabete/getAllData").then((response) => {
         console.log(response);
         if (response) {

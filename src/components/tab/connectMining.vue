@@ -503,7 +503,6 @@ export default {
       let option3 = {
         title: {
           text: "饼状分布图",
-          subtext: "Fake Data",
           left: "center",
         },
         tooltip: {

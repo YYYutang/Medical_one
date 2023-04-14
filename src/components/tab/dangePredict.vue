@@ -6,7 +6,7 @@
     </el-header>
 
     <el-container id="maintest">
-      <div id="step">
+      <div id="step" v-show="showStep">
         <el-steps :active="active" align-center>
           <el-step title="基本信息"></el-step>
           <el-step title="选择数据"></el-step>
@@ -14,7 +14,7 @@
           <el-step title="算法选择"></el-step>
         </el-steps>
       </div>
-      <div id="stepcontain">
+      <div id="stepcontain" v-show="showStep">
         <!--el-form的:model，el-form-item的prop只和验证相关-->
 
         <!--======================================     基本信息表单      ======================================================-->
@@ -136,9 +136,12 @@
               >
             </el-radio-group>
           </el-form-item>
-          <el-form-item >
-            <knn v-if="algoForm.formData.selectedData==1" @outputParams='outputParams'></knn>
-            <k-means v-if="algoForm.formData.selectedData==2"></k-means>
+          <el-form-item>
+            <knn
+              v-if="algoForm.formData.algoName == 'KNN'"
+              @outputParams="outputParams"
+            ></knn>
+            <k-means v-if="algoForm.formData.algoName == 2"></k-means>
           </el-form-item>
           <br />
           <el-form-item>
@@ -148,7 +151,6 @@
             >
           </el-form-item>
         </el-form>
-
       </div>
 
       <div id="charts">
@@ -177,15 +179,17 @@ import { postRequest, getRequest } from "@/utils/api";
 import knn from "@/components/algos/knn.vue";
 
 export default {
-  components:{
+  components: {
     knn,
   },
   data() {
     return {
       showForm: true,
       showChart: false,
+      showStep:true,
       dataOptions: [],
       dataInOptions: [],
+      outComeData:[],
       algoOptions: [
         {
           id: 1,
@@ -253,7 +257,7 @@ export default {
         isShow: false,
         formData: {
           algoName: "",
-          params:[],
+          params: [],
         },
         rules: {
           algoName: [
@@ -272,8 +276,6 @@ export default {
           clusterMode: "0",
         },
       },
-
-
     };
   },
   methods: {
@@ -282,35 +284,38 @@ export default {
       this.showChart = !this.showChart;
     },
     drawChart() {
+
       let myChart1 = this.$echarts.init(document.getElementById("chart1"));
       let myChart2 = this.$echarts.init(document.getElementById("chart2"));
       let myChart3 = this.$echarts.init(document.getElementById("chart3"));
       let option1 = {
         title: {
-          text: "ROC曲线图",
+          text: "饼状分布图",
+          subtext: "Fake Data",
           left: "center",
         },
-        xAxis: {
-          type: "category",
-          boundaryGap: false,
-          data: [0, 0.2, 0.4, 0.6, 0.8, 1],
+        tooltip: {
+          trigger: "item",
         },
-        yAxis: {
-          type: "value",
+        legend: {
+          orient: "vertical",
+          left: "left",
         },
         series: [
           {
-            data: [0, 0.5, 0.7, 0.8, 0.9, 0.91, 0.92],
-            type: "line",
-            areaStyle: {},
-          },
-          {
-            data: [0, 0.2, 0.4, 0.5, 0.6, 0.7, 0.8],
-            type: "line",
-            smooth: true,
+            name: "数据分布图",
+            type: "pie",
+            radius: "50%",
+            data: this.outComeData,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: "rgba(0, 0, 0, 0.5)",
+              },
+            },
           },
         ],
-        color: "#75AAF2",
       };
       let option2 = {
         title: {
@@ -385,9 +390,10 @@ export default {
     },
     submitForm(stepIndex) {
       let formName = this.formArray[stepIndex];
-      // this.$refs[formName].validate((valid) => {
-      //   if (valid) {
-          if (stepIndex < 4) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          console.log(stepIndex + "stepindex" + this.active + "active");
+          if (stepIndex < 3) {
             this[formName].isShow = false;
             this.active++;
             let nextFormName = this.formArray[++stepIndex];
@@ -405,42 +411,48 @@ export default {
                 }
               );
             }
-            if(this.active==4){
+            console.log(stepIndex + "stepindex" + this.active + "active");
+          }
+         else if (stepIndex == 3) {
+                   
               const params={
-                modelName:this.basicInfoForm.modelData.name,
-                modelInfo:this.basicInfoForm.modelData.desc,
-                modelTable:this.dataSelectForm.formData.selectedData,
-                modelColumn:this.columnSelectForm.formData.selectedData,
-                modelAlgo:this.algoForm.formData.selectedData.algoName,
-                modelAlgoParams:this.algoForm.formData.params,
+                modelName:this.basicInfoForm.modelData.name,//模型名称
+                modelInfo:this.basicInfoForm.modelData.desc,//模型信息
+                modelTable:this.dataSelectForm.formData.selectedData,//模型选择的数据表表名
+                modelColumn:this.columnSelectForm.formData.selectedData,//模型选择的属性列（数组）
+                modelAlgo:this.algoForm.formData.algoName,//模型选择的算法名
+                modelAlgoParams:this.algoForm.formData.params,//模型调节的参数（数组）
               }
-              postRequest('',params).then(
+          
+  
+              postRequest('diabete/fitModel',params).then(
                 (response)=>{
                   console.log(response)
+                  this.showChart=!this.showChart
+                  this.showStep=!this.showStep
+                  let tempc=Object.keys(response.data)
+                  console.log(tempc)
+                  var tempData=[]
+                  for(let i=0;i<tempc.length;i++){
+                    var tempObj={}
+                    tempObj.name=tempc[i];
+                    tempObj.value=response.data[tempc[i]]
+                    tempData.push(tempObj)
+                  }
+                  this.outComeData=tempData
+                  console.log(this.outComeData)
+                  this.drawChart()
                 }
 
               );
-            }
-            console.log(
-              "当前表单名字：" +
-                formName +
-                "\n" +
-                "下一个表单名字：" +
-                nextFormName
-            );
-            console.log(
-              "当前表单状态：" +
-                this[formName].isShow +
-                "\n" +
-                "下一个表单状态：" +
-                this[nextFormName].isShow
-            );
-          }
-      //   } else {
-      //     console.log("error submit!!");
-      //     return false;
-      //   }
-      // });
+            
+        
+        } 
+        }else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
     resetForm(stepIndex) {
       let formName = this.formArray[stepIndex];
@@ -479,13 +491,12 @@ export default {
         this.dataOptions.push(obj);
       }
     },
-    outputParams(value){
-      this.algoForm.formData.params=value;
-      
-    }
+    outputParams(value) {
+      this.algoForm.formData.params = value;
+    },
   },
   mounted() {
-    this.drawChart();
+
     this.getAllData();
   },
 };
