@@ -3,7 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import ElementUI from 'element-ui'
-import echarts from "echarts"
+import * as echarts from "echarts"
+import $ from 'jquery'
 import 'element-ui/lib/theme-chalk/index.css';
 import axios from 'axios';
 import { getRequest } from './utils/api';
@@ -22,5 +23,6 @@ Vue.use(ElementUI)
 new Vue({
   router,
   store,
+  $,
   render: h => h(App)
 }).$mount('#app')

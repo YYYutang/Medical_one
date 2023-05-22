@@ -1,7 +1,19 @@
 const { defineConfig } = require('@vue/cli-service')
+const path = require('path')
+var webpack = require('webpack')
+
 module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave: false,
+  chainWebpack:config=>{
+    const dir= path.resolve(__dirname,'src/assets')
+    config.module.rule('svg-sprite ')
+    .test(/\.svg$/)
+    .include.add(dir).end()
+    .use('svg-sprite-loader').loader('svg-sprite-loader').options({extract:false}).end()
+ config.plugin('svg-sprite').use(require('svg-sprite-loader/plugin')),[{plainSprite :true}]
+  config.module.rule('svg').exclude.add(dir)
+},
     devServer: {
      // 代理配置
       proxy: {
@@ -15,5 +27,13 @@ module.exports = defineConfig({
           }
         },
       }
-    }
+    },
+    configureWebpack: {
+      plugins: [
+          new webpack.ProvidePlugin({
+              $: "jquery",
+              jQuery: "jquery",
+          })
+      ]
+  }
 })

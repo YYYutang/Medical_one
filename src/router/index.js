@@ -2,10 +2,9 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import SideBar from '@/components/sideBar/index.vue'
 import dash from '@/views/dash/index.vue'
-import metastasis from "@/views/lung/metastasis";
-import earlyLung from "@/views/lung/earlyLung";
-import connectMining from "@/components/tab/connectMining.vue";
-import dangePredict from "@/components/tab/dangePredict.vue";
+import cardiovascular from "@/views/cardiovascular/cardiovascular";
+import represent from "@/components/tab/represent.vue";
+import visualization from "@/components/tab/visualization.vue";
 import dataManage from "@/components/tab/dataManage.vue";
 import modelManage from "@/components/tab/modelManage.vue"
 import importModel from "@/components/tab/importModel";
@@ -23,22 +22,17 @@ const routes = [
       component : dash
     },
       {
-        path : '/metastasis',
-        name: 'metastasis',
-        component : metastasis
-      },
-      {
-        path : '/earlyLung',
-        name: 'earlyLung',
-        component : earlyLung,
+        path : '/cardiovascular',
+        name: 'cardiovascular',
+        component : cardiovascular,
         children:[{
-          path:'/connectMining',
-          name:'connectMining',
-          component:connectMining,
+          path:'/represent',
+          name:'represent',
+          component:represent,
         },{
-          path:'/dangePredict',
-          name:'dangePredict',
-          component:dangePredict,
+          path:'/visualization',
+          name:'visualization',
+          component:visualization,
         },
         {
           path:'/dataManage',

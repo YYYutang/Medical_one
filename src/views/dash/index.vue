@@ -118,6 +118,7 @@ export default {
         },
       ],
       tableData2:[],
+      
       line: null,
       patientNum: 200,
       quickEntry: [
@@ -132,14 +133,14 @@ export default {
           router: "/modelManage",
         },
         {
-          title: "多病种关联关系挖掘",
+          title: "疾病的特征性指标",
           img: require("../../assets/mutipile.png"),
-          router: "/connectMining",
+          router: "/represent.vue",
         },
         {
-          title: "疾病预测",
+          title: "疾病画像",
           img: require("../../assets/feiai.png"),
-          router: "/dangePredict",
+          router: "/visualization.vue",
         },
         { title: "其他功能", img: require("../../assets/other.png") },
       ],
