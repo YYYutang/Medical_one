@@ -32,10 +32,14 @@
               <i class="el-icon-menu"></i>
               <span slot="title">首页</span>
             </el-menu-item>
-            <el-menu-item index="/cardiovascular">
-                <i class="el-icon-location"></i>
-                <span>心血管疾病</span>
-            </el-menu-item>
+            <el-menu-item index="/dataManage">
+            <i class="el-icon-s-data"></i>
+            数据管理</el-menu-item>
+            <el-menu-item index="/represent">
+            <i class="el-icon-data-line"></i>
+            疾病的特征性指标</el-menu-item>
+            <el-menu-item index="/visualization">
+            <i class="el-icon-s-custom"></i>疾病画像</el-menu-item>
           </el-menu>
         </el-aside>
         <el-main class="main">
@@ -60,15 +64,19 @@ export default {
   methods: {
     handleSelect(key) {
       if (key == 4) {
-        this.$alert("多病种之间具有复杂关联关系，同时多种疾病可能存在某些相同的病征。本软件采用机器学习方法来挖掘多病种之间的复杂关联关系。本软件根据不同疾病的不同使用场景，能够完成数据选择，数据处理，特征选择，模型设置，模型预测等功能。", "软件介绍", {
-          confirmButtonText: "确定",
-          callback: (action) => {
-            this.$message({
-              type: "info",
-              message: `action: ${action}`,
-            });
-          },
-        });
+        this.$alert(
+          "多病种之间具有复杂关联关系，同时多种疾病可能存在某些相同的病征。本软件采用机器学习方法来挖掘多病种之间的复杂关联关系。本软件根据不同疾病的不同使用场景，能够完成数据选择，数据处理，特征选择，模型设置，模型预测等功能。",
+          "软件介绍",
+          {
+            confirmButtonText: "确定",
+            callback: (action) => {
+              this.$message({
+                type: "info",
+                message: `action: ${action}`,
+              });
+            },
+          }
+        );
       }
     },
     handleOpen(key, keyPath) {

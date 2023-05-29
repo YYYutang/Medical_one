@@ -17,7 +17,7 @@
 
       <div id="data_source">
         <span>数据来源：</span>
-        <el-select v-model="value2" placeholder="请选择">
+        <el-select v-model="value2" placeholder="请选择" @change="test">
           <el-option
             v-for="item in options_source"
             :key="item.value"
@@ -42,9 +42,9 @@
           tableData.filter(
             (data) =>
               !(value1 || value2) ||
-              (data.tableStatus.includes(value1) &&
-                data.tableOrigin.includes(value2))
-          )
+              (data?.tableStatus?.includes(value1) &&
+                data?.tableOrigin?.includes(value2)))
+          
         "
         style="width: 100%"
         stripe
@@ -176,6 +176,7 @@ export default {
           }
       },
       value2: "",
+
       tableData: [],
       dialogFormVisible: false,
       selectVisible: false,
@@ -207,6 +208,8 @@ export default {
             };
             this.tableData.push(obj);
           }
+          console.log(this.tableData);
+
           
     },
     importData() {
@@ -248,6 +251,9 @@ export default {
         // }
         // return isJPG && isLt2M;
         return isCSV;
+      },
+      test(){
+        console.log(this.value2)
       },
       submitTable() {
           this.selectVisible = true; 

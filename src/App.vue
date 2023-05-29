@@ -32,7 +32,7 @@ export default {
 html,body{
   height: 100%;
 }
-//注明的样式
+//注明的样弄1�7
 .explain{
   color: red;
   font-size: 12px;
