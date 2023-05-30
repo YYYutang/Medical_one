@@ -6,12 +6,12 @@
         <el-divider></el-divider>
       </div>
       <div>
-        <el-tabs v-if="head2" v-model="activeName">
-          <el-tab-pane label="原始数据统计分析" name="first"
-            ><oldData :dataAll="dataAll" :head2="head2"> </oldData
-          ></el-tab-pane>
-          <el-tab-pane label="处理后数据统计分析" name="second"
-            ><newData :dataChoose="dataChoose" :head2="head2"></newData
+        <el-tabs v-if="head2" v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane label="原始数据统计分析" name="first" 
+            ><oldData v-if="oldShow" :dataAll="dataAll" :dataName="dataSelectForm.formData.selectedData"> </oldData>
+          </el-tab-pane>
+          <el-tab-pane label="处理后数据统计分析" name="second" 
+            ><newData v-if="newShow" :dataChoose="dataChoose" :dataNew="dataNew" :dataName="dataSelectForm.formData.selectedData" :columnName="columnSelectForm.formData.selectedData"></newData
           ></el-tab-pane>
         </el-tabs>
       </div>
@@ -122,20 +122,26 @@
           label-position="top"
         >
           <el-form-item label="选择算法模型" prop="algoName">
-            <el-radio-group
-              v-model="algoForm.formData.algoName"
-              size="mini"
-              prop="selectedData"
-            >
-              <el-radio
-                v-for="item in algoOptions"
-                :key="item.algoName"
-                :label="item.algoName"
-                border
-                >{{ item.algoName }}</el-radio
+            <el-row :gutter="50">
+              <el-radio-group
+                v-model="algoForm.formData.algoName"
+                prop="selectedData"
+            
+                
               >
-            </el-radio-group>
+                <el-col
+                  :span="8"
+                  v-for="item in algoOptions"
+                  :key="item.algoName"
+                >
+                  <el-radio :label="item.algoName" border>{{
+                    item.algoName
+                  }}</el-radio>
+                </el-col>
+              </el-radio-group>
+            </el-row>
           </el-form-item>
+
           <el-form-item>
             <knn
               v-if="algoForm.formData.algoName == 'KNN'"
@@ -169,10 +175,12 @@ export default {
   },
   data() {
     return {
-      activeName: 'first',
+      activeName: "first",
       head1: true,
       head2: false,
       showStep: true,
+      oldShow:true,
+      newShow:false,
       dataOptions: [],
       dataInOptions: [],
       outComeData: [],
@@ -183,11 +191,11 @@ export default {
         },
         {
           id: 2,
-          algoName: "因子分析",
+          algoName: "ICA",
         },
         {
           id: 3,
-          algoName: "ICA",
+          algoName: "因子分析",
         },
       ],
       value1: [],
@@ -254,7 +262,7 @@ export default {
       let formName = this.formArray[stepIndex];
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(stepIndex + "stepindex" + this.active + "active");
+         
           if (stepIndex < 2) {
             this[formName].isShow = false;
             this.active++;
@@ -276,21 +284,34 @@ export default {
                   }
                 }
               );
-              const page = 1;
+    
               getRequest(
                 "/feature/getInfoByTableName?tableName=" +
                   tableName.selectedData +
                   "&page=" +
-                  page
+                  1
               ).then((response) => {
                 this.dataAll = response;
+
               });
             }
+            if(this.active==2){
+              const page = 1;
+            getRequest(
+              "/feature/getInfoBySelectedFiled?page=" +
+                page +
+                "&tableName=" +
+                this.dataSelectForm.formData.selectedData +
+                "&params=" +
+                this.columnSelectForm.formData.selectedData
+            ).then((response) => {
+              this.dataChoose = response;
+                     console.log(this.dataChoose);
+            });
+            }
+            
           } else if (stepIndex == 2) {
-            const page=1;
-             getRequest("/feature/getInfoBySelectedFiled?page="+page+"&tableName="+this.dataSelectForm.formData.selectedData+"&params="+this.columnSelectForm.formData.selectedData).then((response)=>{
-                this.dataChoose=response;
-              })
+
             this.head1 = !this.head1;
             this.head2 = !this.head2;
             this.showStep = !this.showStep;
@@ -359,6 +380,14 @@ export default {
     outputParams(value) {
       this.algoForm.formData.params = value;
     },
+    handleClick(tab,event){
+      if(tab.$options.propsData.name=='first'){
+        this.oldShow=true;
+      }
+      else if(tab.$options.propsData.name=='second'){
+        this.newShow=true;
+      }
+    }
   },
   mounted() {
     this.getAllData();
@@ -373,15 +402,7 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.table {
-  float: left;
-  margin-right: 20px;
-}
-.charts {
-  float: left;
-  margin-right: 20px;
-  margin-top: 40px;
-}
+
 #button1 {
   display: flex;
   justify-content: center;

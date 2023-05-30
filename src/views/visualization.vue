@@ -23,24 +23,27 @@
           ref="dataSelectForm"
           label-position="top"
         >
-          <el-form-item label="选择数据表：" prop="selectedData">
-            <el-radio-group
-              v-model="dataSelectForm.formData.selectedData"
-              size="medium"
-              prop="selectedData"
-            >
-              <el-radio
-                class="radio"
-                v-for="item in dataOptions"
-                :key="item.id"
-                :label="item.tableName"
-                border
-                >{{ item.tableName }}</el-radio
+          <el-form-item label="选择数据表：" prop="selectedData" style="margin-left:30%">
+            <el-row :gutter="10">
+              <el-radio-group
+                v-model="dataSelectForm.formData.selectedData"
+                size="medium"
+                prop="selectedData"
               >
-            </el-radio-group>
+                <el-col v-for="item in dataOptions" :key="item.id" :span="8">
+                  <el-radio
+                    class="radio"
+                    :label="item.tableName"
+                    border
+                    style="margin-top: 20px"
+                    >{{ item.tableName }}</el-radio
+                  >
+                </el-col>
+              </el-radio-group>
+            </el-row>
           </el-form-item>
           <br />
-          <el-form-item>
+          <el-form-item style="margin-left:50%">
             <el-button @click="stepBack(active)">上一步</el-button>
             <el-button type="primary" @click="submitForm(active)"
               >下一步</el-button
@@ -56,24 +59,41 @@
           ref="oneSelectForm"
           label-position="top"
         >
-          <el-form-item label="选择属性列：" prop="selectedData">
-            <el-table
-              :data="newTableData"
-              v-model="oneSelectForm.formData.selectedData"
-              highlight-current-row
-              @current-change="handleCurrentChange"
-              style="width: 100%"
+          <el-form-item label="选择一个病人：" prop="selectedData">
+            <div class="table">
+              <el-table
+                :data="tableData"
+                v-model="oneSelectForm.formData.selectedData"
+                highlight-current-row
+                @current-change="handleCurrentChange"
+                style="width: auto"
+                  border
+              >
+                <el-table-column
+                  v-for="(item, index) in dataColumn"
+                  :key="index"
+                  :label="item"
+                  :prop="item"
+                  width="150"
+              
+                >
+                </el-table-column>
+              </el-table>
+            </div>
+            <el-pagination
+              background
+              class="pagination"
+              layout="prev, pager, next"
+              :current-page="currentPage"
+              :page-size="pageSize"
+              @current-change="handleCurrentClick"
+              :total="allPage"
             >
-              <el-table-column fixed prop="main1" label="主成分1" width="120">
-            </el-table-column>
-            <el-table-column prop="main2" label="主成分2" width="120">
-            </el-table-column>
-            <el-table-column prop="main3" label="主成分3" width="120">
-            </el-table-column>
-            </el-table>
+            </el-pagination>
           </el-form-item>
+
           <br />
-          <el-form-item>
+          <el-form-item style="margin-left:45%">
             <el-button @click="stepBack(active)">上一步</el-button>
             <el-button type="primary" @click="submitForm(active)"
               >完成</el-button
@@ -95,29 +115,25 @@
 </template>
 <script>
 import { postRequest, getRequest } from "@/utils/api";
-import svg from '@/assets/pic.svg'
-import * as echarts from 'echarts'
+import svg from "@/assets/pic.svg";
+import * as echarts from "echarts";
 
 export default {
-
   data() {
     return {
       showForm: true,
       showChart: false,
       showStep: true,
-      dataOptions: [
-        { id: 1, tableName: "cardiovascular" },
-        {
-          id: 2,
-          tableName: "hypertension",
-        },
-      ],
       outComeData: [],
-      value1: [],
-      value2: [],
-      formArray: ["dataSelectForm", "oneSelectForm",],
+      currentPage: 1,
+      pageSize: 10,
+      allPage: 0,
+      dataColumn: [],
+      dataOptions: [],
+      formArray: ["dataSelectForm", "oneSelectForm"],
       active: 0,
       currentRow: null,
+      tableData: [],
 
       //数据选择-----------------------------------------------------------------------------------------------
       dataSelectForm: {
@@ -157,126 +173,6 @@ export default {
           ],
         },
       },
-
-      //模型算法-----------------------------------------------------------------------------------------------
-      modelAlgoForm: {
-        isShow: false,
-        formData: {
-          classifyMode: "0",
-          regressMode: "0",
-          predictMode: "0",
-          clusterMode: "0",
-        },
-      },
-      tableisShow: false,
-      oldTableData: [
-        {
-          userid: "1",
-          weight: "62",
-          height: "168",
-          ap_hi: "110",
-          ap_lo: "80",
-          cholesterol: "1",
-        },
-        {
-          userid: "2",
-          weight: "85",
-          height: "156",
-          ap_hi: "140",
-          ap_lo: "90",
-          cholesterol: "3",
-        },
-        {
-          userid: "3",
-          weight: "64",
-          height: "165",
-          ap_hi: "130",
-          ap_lo: "70",
-          cholesterol: "3",
-        },
-        {
-          userid: "4",
-          weight: "82",
-          height: "169",
-          ap_hi: "150",
-          ap_lo: "100",
-          cholesterol: "1",
-        },
-        {
-          userid: "5",
-          weight: "56",
-          height: "156",
-          ap_hi: "100",
-          ap_lo: "60",
-          cholesterol: "1",
-        },
-        {
-          userid: "6",
-          weight: "151",
-          height: "67",
-          ap_hi: "120",
-          ap_lo: "80",
-          cholesterol: "2",
-        },
-        {
-          userid: "7",
-          weight: "157",
-          height: "93",
-          ap_hi: "130",
-          ap_lo: "80",
-          cholesterol: "3",
-        },
-        {
-          userid: "8",
-          weight: "178",
-          height: "95",
-          ap_hi: "130",
-          ap_lo: "90",
-          cholesterol: "3",
-        },
-      ],
-      newTableData: [
-        {
-          main1: "100.75",
-          main2: "86.43",
-          main3: "1",
-        },
-        {
-          main1: "110.55",
-          main2: "84.87",
-          main3: "3",
-        },
-        {
-          main1: "102.34",
-          main2: "79.33",
-          main3: "3",
-        },
-        {
-          main1: "90.05",
-          main2: "90.43",
-          main3: "1",
-        },
-        {
-          main1: "60.75",
-          main2: "80.43",
-          main3: "1",
-        },
-        {
-          main1: "110.42",
-          main2: "100",
-          main3: "2",
-        },
-        {
-          main1: "130.67",
-          main2: "105",
-          main3: "3",
-        },
-        {
-          main1: "130.93",
-          main2: "102",
-          main3: "3",
-        },
-      ],
     };
   },
   methods: {
@@ -285,101 +181,97 @@ export default {
       this.showChart = !this.showChart;
     },
     drawChart() {
-        var option;
-      let myChart = echarts.init(document.getElementById("chart"))
-  
-    $.get('./pic.svg',
-  function (svg) {
-    echarts.registerMap('organ_diagram', { svg: svg });
-    option= {
-      tooltip: {},
-      geo: {
-        left: 10,
-        right: '50%',
-        map: 'organ_diagram',
-        selectedMode: 'multiple',
-        emphasis: {
-          focus: 'self',
-          itemStyle: {
-            color: null
+      var option;
+      let myChart = echarts.init(document.getElementById("chart"));
+
+      $.get("./pic.svg", function (svg) {
+        echarts.registerMap("organ_diagram", { svg: svg });
+        option = {
+          tooltip: {},
+          geo: {
+            left: 10,
+            right: "50%",
+            map: "organ_diagram",
+            selectedMode: "multiple",
+            emphasis: {
+              focus: "self",
+              itemStyle: {
+                color: null,
+              },
+              label: {
+                position: "bottom",
+                distance: 0,
+                textBorderColor: "#fff",
+                textBorderWidth: 2,
+              },
+            },
+            blur: {},
+            select: {
+              itemStyle: {
+                color: "#b50205",
+              },
+              label: {
+                show: false,
+                textBorderColor: "#fff",
+                textBorderWidth: 2,
+              },
+            },
           },
-          label: {
-            position: 'bottom',
-            distance: 0,
-            textBorderColor: '#fff',
-            textBorderWidth: 2
-          }
-        },
-        blur: {},
-        select: {
-          itemStyle: {
-            color: '#b50205'
+          grid: {
+            left: "60%",
+            top: "20%",
+            bottom: "20%",
           },
-          label: {
-            show: false,
-            textBorderColor: '#fff',
-            textBorderWidth: 2
-          }
-        }
-      },
-      grid: {
-        left: '60%',
-        top: '20%',
-        bottom: '20%'
-      },
-      xAxis: {},
-      yAxis: {
-        data: [
-          'heart',
-          'large-intestine',
-          'small-intestine',
-          'spleen',
-          'kidney',
-          'lung',
-          'liver'
-        ]
-      },
-      series: [
-        {
-        name:'健康人',
-          type: 'bar',
-          emphasis: {
-            focus: 'self'
+          xAxis: {},
+          yAxis: {
+            data: [
+              "heart",
+              "large-intestine",
+              "small-intestine",
+              "spleen",
+              "kidney",
+              "lung",
+              "liver",
+            ],
           },
-          data: [121, 321, 141, 52, 198, 289, 139]
-        },
-        {
-          
-        name:'患者',
-          type: 'bar',
-          emphasis: {
-            focus: 'self'
-          },
-          data: [141, 351, 171, 82, 208, 249, 129]
-        
-        }
-      ]
-    };
-    
-      myChart.setOption(option);
-       myChart.on('mouseover', function (event) {
-      myChart.dispatchAction({
-        type: 'highlight',
-        geoIndex: 0,
-        name: event.name
+          series: [
+            {
+              name: "健康人",
+              type: "bar",
+              emphasis: {
+                focus: "self",
+              },
+              data: [121, 321, 141, 52, 198, 289, 139],
+            },
+            {
+              name: "患者",
+              type: "bar",
+              emphasis: {
+                focus: "self",
+              },
+              data: [141, 351, 171, 82, 208, 249, 129],
+            },
+          ],
+        };
+
+        myChart.setOption(option);
+        myChart.on("mouseover", function (event) {
+          myChart.dispatchAction({
+            type: "highlight",
+            geoIndex: 0,
+            name: event.name,
+          });
+        });
+        myChart.on("mouseout", function (event) {
+          myChart.dispatchAction({
+            type: "downplay",
+            geoIndex: 0,
+            name: event.name,
+          });
+        });
       });
-    });
-    myChart.on('mouseout', function (event) {
-      myChart.dispatchAction({
-        type: 'downplay',
-        geoIndex: 0,
-        name: event.name
-      });
-    });
-  }
-    );
-  
-    option && myChart.setOption(option);
+
+      option && myChart.setOption(option);
     },
     submitForm(stepIndex) {
       let formName = this.formArray[stepIndex];
@@ -391,20 +283,19 @@ export default {
             this.active++;
             let nextFormName = this.formArray[++stepIndex];
             this[nextFormName].isShow = true;
-            if (this.active == 0) {
-              let tableName = this.dataSelectForm.formData;
-              getRequest("/diabete/getAllFiled/" + tableName.selectedData).then(
-                (response) => {
-                  for (let i = 0; i < response.data.length; i++) {
-                    const obj = {
-                      columnName: response.data[i],
-                    };
-                    this.dataInOptions.push(obj);
-                  }
-                }
-              );
+            if (this.active == 1) {
+              let tableName = this.dataSelectForm.formData.selectedData;
+              getRequest(
+                "/feature/getInfoByTableName?tableName=" +
+                  tableName +
+                  "&page=" +
+                  1
+              ).then((response) => {
+                this.dataColumn = Object.keys(response.data[0]);
+                this.allPage = response.total*10;
+                this.tableData = response.data;
+              });
             }
-            console.log(stepIndex + "stepindex" + this.active + "active");
           } else if (stepIndex == 1) {
             this.showChart = !this.showChart;
             this.showStep = !this.showStep;
@@ -448,25 +339,15 @@ export default {
       this.$refs[formName].resetFields();
     },
     stepBack(stepIndex) {
-      if (this.active - 1 > 0) {
+      if (this.active - 1 >= 0) {
+        if (this.active == 1) {
+          this.tableData = [];
+        }
         let formName = this.formArray[stepIndex];
         this[formName].isShow = false;
         this.active--;
         let preFormName = this.formArray[--stepIndex];
         this[preFormName].isShow = true;
-        this.dataInOptions = [];
-      }
-    },
-
-    changeSplitMode(splitMode) {
-      if (splitMode == "random") {
-        this.dataProcessForm.sliderShow = false;
-        this.dataProcessForm.randomSeedShow = true;
-        this.dataProcessForm.formData.randomSeed = ""; //配合rule防止seed为空
-      } else {
-        this.dataProcessForm.randomSeedShow = false;
-        this.dataProcessForm.sliderShow = true;
-        this.dataProcessForm.formData.randomSeed = "null"; //选择’按比例拆分‘不需要seed，设为null绕过rule
       }
     },
 
@@ -486,13 +367,24 @@ export default {
       this.algoForm.formData.params = value;
     },
     setCurrent(row) {
-        this.$refs.oneSelectForm.setCurrentRow(row);
-      },
-      handleCurrentChange(val) {
-        this.currentRow = val;
-        this.oneSelectForm.formData.selectedData=this.currentRow;
-        console.log(this.currentRow);
-      }
+      this.$refs.oneSelectForm.setCurrentRow(row);
+    },
+    handleCurrentChange(val) {
+      this.currentRow = val;
+      this.oneSelectForm.formData.selectedData = this.currentRow;
+      console.log(this.currentRow);
+    },
+    handleCurrentClick(val) {
+      this.currentPage = val;
+      getRequest(
+        "/feature/getInfoByTableName?tableName=" +
+          this.dataSelectForm.formData.selectedData +
+          "&page=" +
+          val
+      ).then((response) => {
+        this.tableData = response.data;
+      });
+    },
   },
   mounted() {
     this.getAllData();
@@ -507,10 +399,6 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.table {
-  float: left;
-  margin-right: 20px;
-}
 .charts {
   float: left;
   margin-right: 20px;
@@ -520,18 +408,22 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+
 }
 #step {
   width: 80%;
-  height: 80%;
-  position: absolute;
-  top: 250px;
+  height:100%;
 }
 #stepcontain {
-  position: absolute;
+
   width: 100%;
   height: 100%;
   top: 44%;
   left: 34%;
+
+}
+.table {
+ 
+  width:auto;
 }
 </style>

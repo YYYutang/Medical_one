@@ -1,21 +1,100 @@
 <template>
   <div>
-    <div>
-      
-      <div id="chart1" class="charts" style="width: 600px; height: 400px"></div>
-      <div id="chart2" class="charts" style="width: 700px; height: 400px"></div>
+    <div id="maintest">
+      <div>
+        <div class="table1">
+          <p>选择的原始数据:</p>
+          <br />
+          <el-table
+            :data="dataChooseNow"
+            style="width:auto"
+            border
+          >
+            <el-table-column
+              v-for="(item, index) in dataColumn"
+              :key="index"
+              :label="item"
+              :prop="item"
+              fixed
+              width="150"
+            >
+            </el-table-column>
+          </el-table>
+          <el-pagination
+          background
+          class="pagination"
+          layout="prev, pager, next"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          @current-change="handleCurrentChange"
+          :total="allPage"
+        >
+        </el-pagination>
+        </div>
+        <div class="table1">
+          <p>处理后的数据:</p>
+          <br />
+          <el-table
+            :data="dataNew.data"
+            style="width: 100%"
+            height="400"
+            border
+          >
+            <el-table-column
+              v-for="(item, index) in dataColumn2"
+              :key="index"
+              :label="item"
+              :prop="item"
+              fixed
+              width="150"
+            >
+            </el-table-column>
+          </el-table>
+            <el-pagination
+          background
+          class="pagination"
+          layout="prev, pager, next"
+          :current-page="currentPage2"
+          :page-size="pageSize"
+          @current-change="handleCurrentChange2"
+          :total="allPage2"
+        >
+        </el-pagination>
+        </div>
+      </div>
+      <div>
+        <div
+          id="chart1"
+          class="charts"
+          style="width: 600px; height: 400px"
+        ></div>
+        <div
+          id="chart2"
+          class="charts"
+          style="width: 700px; height: 400px"
+        ></div>
+      </div>
     </div>
   </div>
 </template>
 <script>
-import * as echarts from 'echarts'
+import * as echarts from "echarts";
+import { getRequest } from "@/utils/api";
 export default {
   name: "newData",
-      props:['dataChoose'],
+  props: ["dataChoose", "dataNew","columnName","dataName"],
   data() {
     return {
-      is:1,
-    }
+      dataColumn: [],
+      dataColumn2: [],
+      currentPage: 1,
+      currentPage2:1,
+      pageSize: 10,
+      allPage:0,
+      allPage2:0,
+      dataChooseNow:[],
+      dataNewNow:[],
+    };
   },
   methods: {
     drawChart() {
@@ -72,11 +151,59 @@ export default {
       myChart1.setOption(option1);
       myChart2.setOption(option2);
     },
+    dealdata() {
+      this.dataColumn = Object.keys(this.dataChoose.data[0]);
+      // this.dataColumn2 = Object.keys(this.dataNew.data[0]);
+      this.allPage = this.dataChoose.total;
+      this.dataChooseNow=this.dataChoose.data;
+      this.dataColumn2=Object.keys(this.dataNew.data[0]);
+      this.allPage2=this.dataNew.total*10;
+      this.dataNewNow=this.dataNew.data;
+    },
+    handleCurrentChange(val){
+      this.currentPage=val;
+      getRequest(
+              "/feature/getInfoBySelectedFiled?page=" +
+                val +
+                "&tableName=" +
+                this.dataName +
+                "&params=" +
+                this.columnName
+            ).then((response) => {
+                this.dataChooseNow=response.data;
+
+              });
+            },
+            handleCurrentChange2(val){
+      this.currentPage2=val;
+      getRequest(
+              
+            ).then((response) => {
+                this.dataNewnow=response.data;
+
+              });
+            },
+            
   },
-  mounted(){
-      this.drawChart();
-  }
+  mounted() {
+    this.drawChart();
+    this.dealdata();
+  },
 };
 </script>
 <style>
+.table1 {
+  float: left;
+  margin-left: 20px;
+}
+.charts {
+  float: left;
+  margin-top: 20px;
+}
+#maintest {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 </style>
