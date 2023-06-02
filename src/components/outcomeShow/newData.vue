@@ -154,7 +154,7 @@ export default {
     dealdata() {
       this.dataColumn = Object.keys(this.dataChoose.data[0]);
       // this.dataColumn2 = Object.keys(this.dataNew.data[0]);
-      this.allPage = this.dataChoose.total;
+      this.allPage = this.dataChoose.total*10;
       this.dataChooseNow=this.dataChoose.data;
       this.dataColumn2=Object.keys(this.dataNew.data[0]);
       this.allPage2=this.dataNew.total*10;

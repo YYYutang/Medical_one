@@ -34,15 +34,15 @@
                   <el-statistic
                     title="数据总量"
                     group-separator=","
-                    :value="4561"
+                    :value=dataAllNum
                   ></el-statistic>
                 </div>
               </el-col>
               <el-col :span="6" id="data_sta">
                 <div>
                   <el-progress type="circle" :percentage="100"></el-progress>
-                  <el-statistic title="指标总量">
-                    <template slot="formatter"> 487 </template>
+                  <el-statistic title="指标总量" :value=insAllNum>
+                    <template slot="formatter">  </template>
                   </el-statistic>
                 </div>
               </el-col>
@@ -51,12 +51,12 @@
                 id="data_sta"
               >
                 <div>
-                  <el-progress type="circle" :percentage="13.67"></el-progress>
+                  <el-progress type="circle" :percentage=missingAll*100></el-progress>
                   <el-statistic
                     group-separator=","
                     :precision="2"
                     decimal-separator="."
-                    :value="13.67"
+                    :value=missingAll*100
                     title="总体缺失率"
                   >
                     <template slot="prefix"> </template>
@@ -66,8 +66,8 @@
               </el-col>
               <el-col :span="6" id="data_sta">
                 <div>
-                  <el-progress type="circle" :percentage="86.33"></el-progress>
-                  <el-statistic :value="86.33" title="总体有效率">
+                  <el-progress type="circle" :percentage=effectiveall*100></el-progress>
+                  <el-statistic title="总体有效率" :value=effectiveall*100>
                     <template slot="suffix"> </template>
                   </el-statistic>
                 </div>
@@ -139,7 +139,10 @@ export default {
     return {
       mychart: {},
       tableData2: [],
-
+      dataAllNum:0,
+      insAllNum:0,
+      missingAll:0,
+      effectiveall:0,
       line: null,
       patientNum: 200,
       quickEntry: [
@@ -219,7 +222,6 @@ export default {
     },
     getAllData() {
       getRequest("/index/getAllData").then((response) => {
-        console.log(response);
         if (response) {
           storage.set("allTableData", JSON.stringify(response.data));
           this.$store.commit("setAllTableData", storage.get("allTableData"));
@@ -238,9 +240,18 @@ export default {
         }
       });
     },
+    getStatis(){
+      getRequest("/index/getStatisticaldData").then((response)=>{
+        this.dataAllNum=response.data['数据总量'];
+        this.insAllNum=response.data['指标总量'];
+        this.missingAll=response.data['总体缺失率'];
+        this.effectiveall=response.data['总体有效率'];
+      })
+    }
   },
   mounted() {
     this.chart1();
+    this.getStatis();
     const that = this;
     this.mychart.resize();
     window.addEventListener("resize", () => {

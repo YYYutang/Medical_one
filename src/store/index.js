@@ -7,11 +7,17 @@ export default new Vuex.Store({
   state: {
     toolBar : true,
     allTableData:[],
+    allColumnData:[],
   },
   getters: {
     getAllTableData(state){
       state.allTableData=storage.get("allTableData");
       return state.allTableData;
+    },
+    getAllColumnData(state){
+      state.allTableData=storage.get("allColumnData");
+      console.log(this.allColumnData)
+      return state.allColumnData;
     }
   },
   mutations: {
@@ -21,6 +27,11 @@ export default new Vuex.Store({
     },
     setAllTableData(state,allTableData){
       state.allTableData=allTableData
+      
+    },
+    setAllColumnData(state,allColumnData){
+      state.allColumnData=allColumnData;
+      console.log(this.allColumnData)
     }
   },
   actions: {

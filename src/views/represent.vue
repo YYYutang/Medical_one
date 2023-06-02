@@ -7,11 +7,23 @@
       </div>
       <div>
         <el-tabs v-if="head2" v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="原始数据统计分析" name="first" 
-            ><oldData v-if="oldShow" :dataAll="dataAll" :dataName="dataSelectForm.formData.selectedData"> </oldData>
+          <el-tab-pane label="原始数据统计分析" name="first"
+            ><oldData
+              v-if="oldShow"
+              :dataAll="dataAll"
+              :dataName="dataSelectForm.formData.selectedData"
+              :statisData="statisData"
+            >
+            </oldData>
           </el-tab-pane>
-          <el-tab-pane label="处理后数据统计分析" name="second" 
-            ><newData v-if="newShow" :dataChoose="dataChoose" :dataNew="dataNew" :dataName="dataSelectForm.formData.selectedData" :columnName="columnSelectForm.formData.selectedData"></newData
+          <el-tab-pane label="处理后数据统计分析" name="second"
+            ><newData
+              v-if="newShow"
+              :dataChoose="dataChoose"
+              :dataNew="dataNew"
+              :dataName="dataSelectForm.formData.selectedData"
+              :columnName="columnSelectForm.formData.selectedData"
+            ></newData
           ></el-tab-pane>
         </el-tabs>
       </div>
@@ -56,7 +68,7 @@
             </el-row>
           </el-form-item>
           <br />
-          <el-form-item>
+          <el-form-item class="button1">
             <el-button @click="stepBack(active)">上一步</el-button>
             <el-button type="primary" @click="submitForm(active)"
               >下一步</el-button
@@ -73,35 +85,115 @@
           label-position="top"
         >
           <el-form-item label="选择属性列：" prop="selectedData">
-            <el-row :gutter="10">
-              <el-checkbox-group
-                v-model="columnSelectForm.formData.selectedData"
-                size="medium"
-                prop="selectedData"
-              >
+            <el-checkbox-group
+              v-model="columnSelectForm.formData.selectedData"
+              size="medium"
+              prop="selectedData"
+            >
+              <el-row :gutter="10">
+                <h5 class="text">人口学指标</h5>
+             
                 <el-col
-                  v-for="item in dataInOptions"
+                  v-for="item in demoOptions"
                   :key="item.columnName"
                   :span="6"
                 >
-                  <el-tooltip
-                    effect="light"
-                    :content="item.columnDesc"
-                    placement="top"
-                    style="margin-top: 20px"
-                  >
-                    <!--这里key和label要改-->
-                    <el-checkbox
-                      class="radio"
-                      :label="item.columnName"
-                      border
+                  <div v-if="item.columnisR">
+                    <el-tooltip
+                      effect="light"
+                      :content="item.columnDesc"
+                      placement="top"
                       style="margin-top: 20px"
-                      >{{ item.columnName }}</el-checkbox
                     >
-                  </el-tooltip>
+                      <el-checkbox
+                        class="radio"
+                        :label="item.columnName"
+                        border
+                        style="margin-top: 20px"
+                        >{{ item.columnName }}</el-checkbox
+                      >
+                    </el-tooltip>
+                  </div>
                 </el-col>
-              </el-checkbox-group>
-            </el-row>
+              </el-row>
+              <el-row :gutter="10">
+                <h5 class="text">行为学指标</h5>
+  
+                <el-col
+                  v-for="item in sociolOptions"
+                  :key="item.columnName"
+                  :span="6"
+                >
+                  <div v-if="item.columnisX">
+                    <el-tooltip
+                      effect="light"
+                      :content="item.columnDesc"
+                      placement="top"
+                      style="margin-top: 20px"
+                    >
+                      <el-checkbox
+                        class="radio"
+                        :label="item.columnName"
+                        border
+                        style="margin-top: 20px"
+                        >{{ item.columnName }}</el-checkbox
+                      >
+                    </el-tooltip>
+                  </div>
+                </el-col>
+              </el-row>
+              <el-row :gutter="10">
+                <h5 class="text">生理指标</h5>
+        
+                <el-col
+                  v-for="item in physioOptions"
+                  :key="item.columnName"
+                  :span="6"
+                >
+                  <div v-if="item.columnisS">
+                    <el-tooltip
+                      effect="light"
+                      :content="item.columnDesc"
+                      placement="top"
+                      style="margin-top: 20px"
+                    >
+                      <el-checkbox
+                        class="radio"
+                        :label="item.columnName"
+                        border
+                        style="margin-top: 20px"
+                        >{{ item.columnName }}</el-checkbox
+                      >
+                    </el-tooltip>
+                  </div>
+                </el-col>
+              </el-row>
+              <el-row :gutter="10">
+                <h5 class="text">其他指标</h5>
+                <el-col
+                  v-for="item in otherOptions"
+                  :key="item.columnName"
+                  :span="6"
+                >
+                  <div v-if="item.columnisO">
+                    <el-tooltip
+                      effect="light"
+                      :content="item.columnDesc"
+                      placement="top"
+                      style="margin-top: 20px"
+                    >
+                      <el-checkbox
+                        class="radio"
+                        :label="item.columnName"
+                        border
+                        style="margin-top: 20px"
+                        >{{ item.columnName }}</el-checkbox
+                      >
+                    </el-tooltip>
+                  </div>
+                </el-col>
+              </el-row>
+            </el-checkbox-group>
           </el-form-item>
           <br />
           <el-form-item>
@@ -126,8 +218,6 @@
               <el-radio-group
                 v-model="algoForm.formData.algoName"
                 prop="selectedData"
-            
-                
               >
                 <el-col
                   :span="8"
@@ -150,7 +240,7 @@
             <k-means v-if="algoForm.formData.algoName == 2"></k-means>
           </el-form-item>
           <br />
-          <el-form-item>
+          <el-form-item class="button1">
             <el-button @click="stepBack(active)">上一步</el-button>
             <el-button type="primary" @click="submitForm(active)"
               >完成</el-button
@@ -166,6 +256,7 @@ import { postRequest, getRequest } from "@/utils/api";
 import knn from "@/components/algos/knn.vue";
 import oldData from "@/components/outcomeShow/oldData.vue";
 import newData from "@/components/outcomeShow/newData.vue";
+import storage from "@/utils/storage";
 
 export default {
   components: {
@@ -179,11 +270,16 @@ export default {
       head1: true,
       head2: false,
       showStep: true,
-      oldShow:true,
-      newShow:false,
+      oldShow: true,
+      newShow: false,
       dataOptions: [],
       dataInOptions: [],
+      demoOptions: [],
+      physioOptions: [],
+      sociolOptions: [],
+      otherOptions: [],
       outComeData: [],
+
       algoOptions: [
         {
           id: 1,
@@ -255,6 +351,7 @@ export default {
       dataAll: [],
       dataChoose: [],
       dataNew: [],
+      statisData: [],
     };
   },
   methods: {
@@ -262,7 +359,6 @@ export default {
       let formName = this.formArray[stepIndex];
       this.$refs[formName].validate((valid) => {
         if (valid) {
-         
           if (stepIndex < 2) {
             this[formName].isShow = false;
             this.active++;
@@ -272,19 +368,61 @@ export default {
               let tableName = this.dataSelectForm.formData;
               getRequest("/feature/getAllFiled/" + tableName.selectedData).then(
                 (response) => {
-                  var temp = Object.keys(response.data);
-                  var key = Object.values(response.data);
-
-                  for (let i = 0; i < temp.length; i++) {
-                    const obj = {
-                      columnName: temp[i],
-                      columnDesc: key[i],
-                    };
-                    this.dataInOptions.push(obj);
+                  let data = response.data;
+                  let columnNametemp = Object.keys(data);
+                  for (let i = 0; i < columnNametemp.length; i++) {
+                    if (data[columnNametemp[i]] != null) {
+                      const obj = {
+                        columnName: data[columnNametemp[i]].fieldName,
+                        columnDesc: data[columnNametemp[i]].fieldNameCh,
+                      };
+                      if (data[columnNametemp[i]].isDemography == 1) {
+                        obj.columnisR = true;
+                      } else {
+                        obj.columnisR = false;
+                      }
+                      if (data[columnNametemp[i]].isSociology == 1) {
+                        obj.columnisX = true;
+                      } else {
+                        obj.columnisX = false;
+                      }
+                      if (data[columnNametemp[i]].isPhysiological == 1) {
+                        obj.columnisS = true;
+                      } else {
+                        obj.columnisS = false;
+                      }
+                      if (!obj.columnisR && !obj.columnisS && !obj.columnisX) {
+                        obj.columnisO = true;
+                      } else {
+                        obj.columnisO = false;
+                      }
+                      if (obj.columnisR == true) {
+                        this.demoOptions.push(obj);
+                      }
+                      if (obj.columnisS == true) {
+                        this.physioOptions.push(obj);
+                      }
+                      if (obj.columnisX == true) {
+                        this.sociolOptions.push(obj);
+                      }
+                      if (obj.columnisO == true) {
+                        this.otherOptions.push(obj);
+                      }
+                      this.dataInOptions.push(obj);
+                    }
                   }
+
+                  storage.set(
+                    "allColumnData",
+                    JSON.stringify(this.dataInOptions)
+                  );
+                  this.$store.commit(
+                    "setAllColumnData",
+                    storage.get("allColumnData")
+                  );
                 }
               );
-    
+
               getRequest(
                 "/feature/getInfoByTableName?tableName=" +
                   tableName.selectedData +
@@ -292,35 +430,36 @@ export default {
                   1
               ).then((response) => {
                 this.dataAll = response;
-
+              });
+              getRequest(
+                "/feature/getStatisticaldData/" + tableName.selectedData
+              ).then((response) => {
+                console.log(response)
+                this.statisData = response.data;
               });
             }
-            if(this.active==2){
+            if (this.active == 2) {
               const page = 1;
-            getRequest(
-              "/feature/getInfoBySelectedFiled?page=" +
-                page +
-                "&tableName=" +
-                this.dataSelectForm.formData.selectedData +
-                "&params=" +
-                this.columnSelectForm.formData.selectedData
-            ).then((response) => {
-              this.dataChoose = response;
-                     console.log(this.dataChoose);
-            });
+              getRequest(
+                "/feature/getInfoBySelectedFiled?page=" +
+                  page +
+                  "&tableName=" +
+                  this.dataSelectForm.formData.selectedData +
+                  "&params=" +
+                  this.columnSelectForm.formData.selectedData
+              ).then((response) => {
+                this.dataChoose = response;
+              });
             }
-            
           } else if (stepIndex == 2) {
-
             this.head1 = !this.head1;
             this.head2 = !this.head2;
             this.showStep = !this.showStep;
-            // const params={
-            //   modelTable:this.dataSelectForm.formData.selectedData,//模型选择的数据表表名
-            //   modelColumn:this.columnSelectForm.formData.selectedData,//模型选择的属性列（数组）
-            //   modelAlgo:this.algoForm.formData.algoName,//模型选择的算法名
-            //   modelAlgoParams:this.algoForm.formData.params,//模型调节的参数（数组）
-            // }
+            const params={
+              modelTable:this.dataSelectForm.formData.selectedData,//模型选择的数据表表名
+              modelColumn:this.columnSelectForm.formData.selectedData,//模型选择的属性列（数组）
+              modelAlgo:this.algoForm.formData.algoName,//模型选择的算法名
+            }
 
             // postRequest('diabete/fitModel',params).then(
             //   (response)=>{
@@ -380,14 +519,13 @@ export default {
     outputParams(value) {
       this.algoForm.formData.params = value;
     },
-    handleClick(tab,event){
-      if(tab.$options.propsData.name=='first'){
-        this.oldShow=true;
+    handleClick(tab, event) {
+      if (tab.$options.propsData.name == "first") {
+        this.oldShow = true;
+      } else if (tab.$options.propsData.name == "second") {
+        this.newShow = true;
       }
-      else if(tab.$options.propsData.name=='second'){
-        this.newShow=true;
-      }
-    }
+    },
   },
   mounted() {
     this.getAllData();
@@ -403,11 +541,6 @@ export default {
   align-items: center;
 }
 
-#button1 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 #step {
   width: 80%;
   height: 80%;
@@ -420,5 +553,16 @@ export default {
   height: 100%;
   top: 44%;
   left: 34%;
+}
+
+.button1 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin-top: 20px;
+  left: 10%;
+}
+.text {
+  font-size: 14px;
 }
 </style>

@@ -12,6 +12,7 @@
           <el-step title="选择一条数据"></el-step>
         </el-steps>
       </div>
+
       <div id="stepcontain" v-show="showStep">
         <!--el-form的:model，el-form-item的prop只和验证相关-->
         <!--======================================     选择数据表单      ======================================================-->
@@ -23,7 +24,11 @@
           ref="dataSelectForm"
           label-position="top"
         >
-          <el-form-item label="选择数据表：" prop="selectedData" style="margin-left:30%">
+          <el-form-item
+            label="选择数据表："
+            prop="selectedData"
+            style="margin-left: 30%"
+          >
             <el-row :gutter="10">
               <el-radio-group
                 v-model="dataSelectForm.formData.selectedData"
@@ -43,8 +48,7 @@
             </el-row>
           </el-form-item>
           <br />
-          <el-form-item style="margin-left:50%">
-            <el-button @click="stepBack(active)">上一步</el-button>
+          <el-form-item style="margin-left: 45%">
             <el-button type="primary" @click="submitForm(active)"
               >下一步</el-button
             >
@@ -67,7 +71,7 @@
                 highlight-current-row
                 @current-change="handleCurrentChange"
                 style="width: auto"
-                  border
+                border
               >
                 <el-table-column
                   v-for="(item, index) in dataColumn"
@@ -75,7 +79,6 @@
                   :label="item"
                   :prop="item"
                   width="150"
-              
                 >
                 </el-table-column>
               </el-table>
@@ -93,7 +96,7 @@
           </el-form-item>
 
           <br />
-          <el-form-item style="margin-left:45%">
+          <el-form-item style="margin-left: 45%">
             <el-button @click="stepBack(active)">上一步</el-button>
             <el-button type="primary" @click="submitForm(active)"
               >完成</el-button
@@ -102,12 +105,42 @@
         </el-form>
       </div>
 
-      <div>
+      <div v-show="showChart">
+        <div  class="chooseBar">
+         <span style="margin-right:20px">请选择指标</span>
+        
+        <el-select v-model="value1" placeholder="请选择肾脏相关的指标" @change="changeKidney">
+          <el-option
+            v-for="item in kidneyFormalData"
+            :key="item.name"
+            :label="item.nameCH"
+            :value="item.nameCH"
+            
+          >
+          </el-option>
+        </el-select>
+
+        <el-select
+          v-model="value2"
+          collapse-tags
+          style="margin-left: 20px"
+          placeholder="请选择肝脏相关的指标"
+          @change="changeLiver"
+        >
+          <el-option
+            v-for="item in liverFormalData"
+            :key="item.name"
+            :label="item.nameCH"
+            :value="item.nameCH"
+          >
+          </el-option>
+        </el-select>
+        </div>
+        <div></div>
         <div
           id="chart"
           class="charts"
           style="width: 1000px; height: 800px"
-          v-show="showChart"
         ></div>
       </div>
     </el-container>
@@ -115,7 +148,6 @@
 </template>
 <script>
 import { postRequest, getRequest } from "@/utils/api";
-import svg from "@/assets/pic.svg";
 import * as echarts from "echarts";
 
 export default {
@@ -130,10 +162,27 @@ export default {
       allPage: 0,
       dataColumn: [],
       dataOptions: [],
+      healthDataLow: [0, 0, 0, 0, 3.2, 0, 0],
+      healthDataHigh: [0, 0, 0, 0, 3.8, 0, 40],
+      patientData: [],
       formArray: ["dataSelectForm", "oneSelectForm"],
       active: 0,
       currentRow: null,
       tableData: [],
+      
+      kidneyFormalData: [
+        { name: "BUN", min: 3.2, max: 7.1,nameCH:"血尿素氮" },
+        { name: "BU", min: 3.2, max: 7.0 ,nameCH:"血尿素" },
+        { name: "SCR", min: 50, max: 90,nameCH:"血肌酐"  },
+        { name: "UCR", min: 100, max: 170 ,nameCH:"尿肌酐" }],
+      liverFormalData:[
+        { name: "ALT", min: 0, max: 40 ,nameCH:"谷丙转氨酶" },
+        { name: "AST", min: 0, max: 35 ,nameCH:"谷草转氨酶" },
+        { name: "GGT", min: 10, max: 45 ,nameCH:"谷氨酰胺转移酶" },
+        { name: "ALP", min: 45, max: 125 ,nameCH:"碱性磷酸酶" },
+      ],
+      value1: [],
+      value2: [],
 
       //数据选择-----------------------------------------------------------------------------------------------
       dataSelectForm: {
@@ -183,7 +232,7 @@ export default {
     drawChart() {
       var option;
       let myChart = echarts.init(document.getElementById("chart"));
-
+      const that = this;
       $.get("./pic.svg", function (svg) {
         echarts.registerMap("organ_diagram", { svg: svg });
         option = {
@@ -238,10 +287,24 @@ export default {
             {
               name: "健康人",
               type: "bar",
+              stack: "Total",
               emphasis: {
                 focus: "self",
               },
-              data: [121, 321, 141, 52, 198, 289, 139],
+              itemStyle: {
+                borderColor: "transparent",
+                color: "transparent",
+              },
+              data: that.healthDataLow,
+            },
+            {
+              name: "健康人",
+              type: "bar",
+              stack: "Total",
+              emphasis: {
+                focus: "self",
+              },
+              data: that.healthDataHigh,
             },
             {
               name: "患者",
@@ -249,12 +312,27 @@ export default {
               emphasis: {
                 focus: "self",
               },
-              data: [141, 351, 171, 82, 208, 249, 129],
+              data: that.patientData,
             },
           ],
         };
 
         myChart.setOption(option);
+        if(that.patientData[4]<that.healthDataLow[4]||that.patientData[4]>that.healthDataHigh[4]+that.healthDataLow[4]){
+   
+        myChart.dispatchAction({
+          type:'highlight',
+          geoIndex:0,
+          name:'kidney',
+        })
+        }
+        if(that.patientData[6]<that.healthDataLow[6]||that.patientData[6]>that.healthDataHigh[6]+that.healthDataLow[6]){
+        myChart.dispatchAction({
+          type:'highlight',
+          geoIndex:0,
+          name:'liver',
+        })
+        }
         myChart.on("mouseover", function (event) {
           myChart.dispatchAction({
             type: "highlight",
@@ -292,7 +370,7 @@ export default {
                   1
               ).then((response) => {
                 this.dataColumn = Object.keys(response.data[0]);
-                this.allPage = response.total*10;
+                this.allPage = response.total * 10;
                 this.tableData = response.data;
               });
             }
@@ -300,33 +378,15 @@ export default {
             this.showChart = !this.showChart;
             this.showStep = !this.showStep;
             this.tableisShow = !this.tableisShow;
-            this.drawChart();
-            // const params={
-            //   modelTable:this.dataSelectForm.formData.selectedData,//模型选择的数据表表名
-            //   modelColumn:this.columnSelectForm.formData.selectedData,//模型选择的属性列（数组）
-            //   modelAlgo:this.algoForm.formData.algoName,//模型选择的算法名
-            //   modelAlgoParams:this.algoForm.formData.params,//模型调节的参数（数组）
-            // }
+            // this.showChart=!this.showChart
+            // this.showStep=!this.showStep
+            let select = this.oneSelectForm.formData.selectedData;
+            const temp1 = [0, 0, 0, 0, 0, 0, 0];
+            temp1[4] = select["BU"];
+            temp1[6] = select["ALT"];
 
-            // postRequest('diabete/fitModel',params).then(
-            //   (response)=>{
-            //     console.log(response)
-            //     this.showChart=!this.showChart
-            //     this.showStep=!this.showStep
-            //     let tempc=Object.keys(response.data)
-            //     console.log(tempc)
-            //     var tempData=[]
-            //     for(let i=0;i<tempc.length;i++){
-            //       var tempObj={}
-            //       tempObj.name=tempc[i];
-            //       tempObj.value=response.data[tempc[i]]
-            //       tempData.push(tempObj)
-            //     }
-            //     this.outComeData=tempData
-            //     console.log(this.outComeData)
-            //     this.drawChart()
-            //   },
-            // );
+            this.patientData = temp1;
+            this.drawChart();
           }
         } else {
           console.log("error submit!!");
@@ -372,7 +432,6 @@ export default {
     handleCurrentChange(val) {
       this.currentRow = val;
       this.oneSelectForm.formData.selectedData = this.currentRow;
-      console.log(this.currentRow);
     },
     handleCurrentClick(val) {
       this.currentPage = val;
@@ -385,6 +444,28 @@ export default {
         this.tableData = response.data;
       });
     },
+    changeKidney(val){
+      for (let i in this.kidneyFormalData){
+        if(this.kidneyFormalData[i].nameCH==val){
+          this.healthDataLow[4]=this.kidneyFormalData[i].min;
+          this.healthDataHigh[4]=this.kidneyFormalData[i].max-this.kidneyFormalData[i].min;
+          this.patientData[4]=this.oneSelectForm.formData.selectedData[this.kidneyFormalData[i].name];
+        }
+       
+      }
+       this.drawChart();
+    },
+    changeLiver(val){
+      for (let i in this.liverFormalData){
+        if(this.liverFormalData[i].nameCH==val){
+          this.healthDataLow[6]=this.liverFormalData[i].min;
+          this.healthDataHigh[6]=this.liverFormalData[i].max-this.liverFormalData[i].min;
+          this.patientData[6]=this.oneSelectForm.formData.selectedData[this.liverFormalData[i].name];
+        }
+       
+      }
+       this.drawChart();
+    }
   },
   mounted() {
     this.getAllData();
@@ -399,31 +480,31 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
+#step {
+  width: 80%;
+  height: 100%;
+  margin-top: 130px;
+}
+#stepcontain {
+  width: 100%;
+  height: 100%;
+  margin-top: 150px;
+  left: 15%;
+}
+.table {
+  width: auto;
+}
 .charts {
-  float: left;
+
   margin-right: 20px;
   margin-top: 40px;
 }
-#button1 {
-  display: flex;
-  justify-content: center;
+.chooseBar{
+    display: flex;
+      justify-content: center;
   align-items: center;
+  margin-top:40px;
 
-}
-#step {
-  width: 80%;
-  height:100%;
-}
-#stepcontain {
-
-  width: 100%;
-  height: 100%;
-  top: 44%;
-  left: 34%;
-
-}
-.table {
- 
-  width:auto;
 }
 </style>
