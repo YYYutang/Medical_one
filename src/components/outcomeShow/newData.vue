@@ -2,7 +2,7 @@
   <div>
     <div id="maintest">
       <div>
-        <div class="table1">
+        <div class="table1" >
           <p>选择的原始数据:</p>
           <br />
           <el-table
@@ -35,13 +35,13 @@
           <p>处理后的数据:</p>
           <br />
           <el-table
-            :data="dataNew.data"
-            style="width: 100%"
+            :data="dataNewNow"
+            style="width: auto"
             height="400"
             border
           >
             <el-table-column
-              v-for="(item, index) in dataColumn2"
+              v-for="(item, index) in dataNewColumns"
               :key="index"
               :label="item"
               :prop="item"
@@ -82,7 +82,7 @@ import * as echarts from "echarts";
 import { getRequest } from "@/utils/api";
 export default {
   name: "newData",
-  props: ["dataChoose", "dataNew","columnName","dataName"],
+  props: ["dataChoose", "dataNew","columnName","dataName","dataNewColumns"],
   data() {
     return {
       dataColumn: [],
@@ -107,14 +107,14 @@ export default {
         },
         xAxis: {
           type: "category",
-          data: ["1", "2", "3", "4", "5", "6", "7"],
+          data: ["主成分1", "主成分2", "主成分3", "主成分4", "主成分5", "主成分6", "主成分7","主成分8","主成分9","主成分10"],
         },
         yAxis: {
           type: "value",
         },
         series: [
           {
-            data: [120, 200, 150, 80, 70, 110, 130],
+            data: [5.6,7.8,5.9,8,9,7.8,8.4,9.6,8.8,9.4],
             type: "bar",
             showBackground: true,
             color: "#75AAF2",
@@ -152,13 +152,27 @@ export default {
       myChart2.setOption(option2);
     },
     dealdata() {
+
       this.dataColumn = Object.keys(this.dataChoose.data[0]);
-      // this.dataColumn2 = Object.keys(this.dataNew.data[0]);
       this.allPage = this.dataChoose.total*10;
       this.dataChooseNow=this.dataChoose.data;
-      this.dataColumn2=Object.keys(this.dataNew.data[0]);
-      this.allPage2=this.dataNew.total*10;
-      this.dataNewNow=this.dataNew.data;
+      // this.allPage2=this.dataNew.total*10;
+      // this.dataNewNow=this.dataNew.data;
+
+
+      console.log(this.dataNew);
+
+      
+      for(let i in this.dataNew[this.dataNewColumns[0]]){
+        var tempObj={};
+        for(let j in this.dataNewColumns){
+         tempObj[[this.dataNewColumns[j]]]=this.dataNew[this.dataNewColumns[j]][i]
+         
+      }
+        this.dataNewNow.push(tempObj)
+      }
+        
+
     },
     handleCurrentChange(val){
       this.currentPage=val;
@@ -192,18 +206,23 @@ export default {
 };
 </script>
 <style>
-.table1 {
-  float: left;
-  margin-left: 20px;
-}
-.charts {
-  float: left;
-  margin-top: 20px;
-}
 #maintest {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
+.table1 {
+
+ width:auto;
+  margin-left: 20px;
+    flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.charts {
+  float: left;
+  margin-top: 20px;
+}
+
 </style>

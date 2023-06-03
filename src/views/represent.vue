@@ -21,6 +21,7 @@
               v-if="newShow"
               :dataChoose="dataChoose"
               :dataNew="dataNew"
+              :dataNewColumns="dataNewColumns"
               :dataName="dataSelectForm.formData.selectedData"
               :columnName="columnSelectForm.formData.selectedData"
             ></newData
@@ -274,11 +275,13 @@ export default {
       newShow: false,
       dataOptions: [],
       dataInOptions: [],
+      dataNew:[],
+      dataNewColumns:[],
       demoOptions: [],
       physioOptions: [],
       sociolOptions: [],
       otherOptions: [],
-      outComeData: [],
+
 
       algoOptions: [
         {
@@ -411,7 +414,7 @@ export default {
                       this.dataInOptions.push(obj);
                     }
                   }
-
+    
                   storage.set(
                     "allColumnData",
                     JSON.stringify(this.dataInOptions)
@@ -461,25 +464,17 @@ export default {
               modelAlgo:this.algoForm.formData.algoName,//模型选择的算法名
             }
 
-            // postRequest('diabete/fitModel',params).then(
-            //   (response)=>{
-            //     console.log(response)
-            //     this.showChart=!this.showChart
-            //     this.showStep=!this.showStep
-            //     let tempc=Object.keys(response.data)
-            //     console.log(tempc)
-            //     var tempData=[]
-            //     for(let i=0;i<tempc.length;i++){
-            //       var tempObj={}
-            //       tempObj.name=tempc[i];
-            //       tempObj.value=response.data[tempc[i]]
-            //       tempData.push(tempObj)
-            //     }
-            //     this.outComeData=tempData
-            //     console.log(this.outComeData)
-            //     this.drawChart()
-            //   },
-            // );
+            getRequest('feature/runAi/'+params.modelTable).then((response)=>{
+              for(let i in response.data){
+                var num=parseInt(i)+1;
+            this.dataNewColumns.push("主成分"+num);
+            this.dataNew["主成分"+num]=response.data[i];
+              }
+
+
+    
+            })
+           
           }
         } else {
           console.log("error submit!!");
