@@ -13,6 +13,7 @@
               :dataAll="dataAll"
               :dataName="dataSelectForm.formData.selectedData"
               :statisData="statisData"
+              :dataColumns="dataInOptions"
             >
             </oldData>
           </el-tab-pane>
@@ -93,7 +94,7 @@
             >
               <el-row :gutter="10">
                 <h5 class="text">人口学指标</h5>
-             
+
                 <el-col
                   v-for="item in demoOptions"
                   :key="item.columnName"
@@ -119,7 +120,7 @@
               </el-row>
               <el-row :gutter="10">
                 <h5 class="text">行为学指标</h5>
-  
+
                 <el-col
                   v-for="item in sociolOptions"
                   :key="item.columnName"
@@ -145,7 +146,7 @@
               </el-row>
               <el-row :gutter="10">
                 <h5 class="text">生理指标</h5>
-        
+
                 <el-col
                   v-for="item in physioOptions"
                   :key="item.columnName"
@@ -275,13 +276,12 @@ export default {
       newShow: false,
       dataOptions: [],
       dataInOptions: [],
-      dataNew:[],
-      dataNewColumns:[],
+      dataNew: [],
+      dataNewColumns: [],
       demoOptions: [],
       physioOptions: [],
       sociolOptions: [],
       otherOptions: [],
-
 
       algoOptions: [
         {
@@ -414,15 +414,6 @@ export default {
                       this.dataInOptions.push(obj);
                     }
                   }
-    
-                  storage.set(
-                    "allColumnData",
-                    JSON.stringify(this.dataInOptions)
-                  );
-                  this.$store.commit(
-                    "setAllColumnData",
-                    storage.get("allColumnData")
-                  );
                 }
               );
 
@@ -437,7 +428,7 @@ export default {
               getRequest(
                 "/feature/getStatisticaldData/" + tableName.selectedData
               ).then((response) => {
-                console.log(response)
+                console.log(response);
                 this.statisData = response.data;
               });
             }
@@ -451,6 +442,7 @@ export default {
                   "&params=" +
                   this.columnSelectForm.formData.selectedData
               ).then((response) => {
+                console.log(response);
                 this.dataChoose = response;
               });
             }
@@ -458,23 +450,21 @@ export default {
             this.head1 = !this.head1;
             this.head2 = !this.head2;
             this.showStep = !this.showStep;
-            const params={
-              modelTable:this.dataSelectForm.formData.selectedData,//模型选择的数据表表名
-              modelColumn:this.columnSelectForm.formData.selectedData,//模型选择的属性列（数组）
-              modelAlgo:this.algoForm.formData.algoName,//模型选择的算法名
-            }
+            const params = {
+              modelTable: this.dataSelectForm.formData.selectedData, //模型选择的数据表表名
+              modelColumn: this.columnSelectForm.formData.selectedData, //模型选择的属性列（数组）
+              modelAlgo: this.algoForm.formData.algoName, //模型选择的算法名
+            };
 
-            getRequest('feature/runAi/'+params.modelTable).then((response)=>{
-              for(let i in response.data){
-                var num=parseInt(i)+1;
-            this.dataNewColumns.push("主成分"+num);
-            this.dataNew["主成分"+num]=response.data[i];
+            getRequest("feature/runAi/" + params.modelTable).then(
+              (response) => {
+                for (let i in response.data) {
+                  var num = parseInt(i) + 1;
+                  this.dataNewColumns.push("主成分" + num);
+                  this.dataNew["主成分" + num] = response.data[i];
+                }
               }
-
-
-    
-            })
-           
+            );
           }
         } else {
           console.log("error submit!!");
@@ -547,7 +537,7 @@ export default {
   width: 100%;
   height: 100%;
   top: 44%;
-  left: 34%;
+  left: 38%;
 }
 
 .button1 {

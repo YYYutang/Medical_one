@@ -22,7 +22,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   //text-align: center;
-  color: #2c3e50;
+  color: black;
 }
 *{
   margin:0;
@@ -32,7 +32,7 @@ export default {
 html,body{
   height: 100%;
 }
-//注明的样弄1�7
+//注明的样弄1�7
 .explain{
   color: red;
   font-size: 12px;

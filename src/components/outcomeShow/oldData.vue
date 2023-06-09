@@ -2,15 +2,28 @@
   <div>
     <div>
       <div class="table">
-        <p>数据统计:</p>
+        <p class="text">数据统计:</p>
         <br />
         <div>
-          <el-table :data="statis" height="450" style="width: auto" border>
+          <el-table
+            :data="statis"
+            height="450"
+            style="width: auto"
+            border
+            :cell-style="{ borderColor: '#C0C0C0', textAlign: 'center' }"
+            :header-cell-style="{
+              background: '#BBDEFB',
+              color: '#606266',
+              borderColor: '#C0C0C0',
+              textAlign: 'center',
+            }"
+            stripe
+          >
             <el-table-column
               v-for="(item, index) in statisColumn"
               :key="index"
-              :label="item"
-              :prop="item"
+              :label="item.label"
+              :prop="item.name"
               width="150"
             >
             </el-table-column>
@@ -19,23 +32,37 @@
       </div>
       <br />
       <div class="table">
-
-        <p>原始数据:</p>
-        <br>
-                <el-radio-group v-model="dataCondition" @input="changeDataNow">
+        <p class="text">原始数据:</p>
+        <br />
+        <el-radio-group v-model="dataCondition" @input="changeDataNow">
           <el-radio :label="1">人口学</el-radio>
           <el-radio :label="2">生理指标</el-radio>
           <el-radio :label="3">行为学</el-radio>
+          <el-radio :label="4">其他指标</el-radio>
+          <el-radio :label="5">全部数据</el-radio>
         </el-radio-group>
         <br />
-        <div class="table1">
-          <el-table :data="dataNow" style="width: auto" border>
+        <div  class="table1">
+          <el-table
+            :data="dataNow"
+            border
+            class="tableDown"
+            :cell-style="{ borderColor: '#C0C0C0', textAlign: 'center' }"
+            :header-cell-style="{
+              background: '#BBDEFB',
+              color: '#606266',
+              borderColor: '#C0C0C0',
+              textAlign: 'center',
+            }"
+          >
             <el-table-column
               v-for="(item, index) in dataColumn"
               :key="index"
               :label="item"
               :prop="item"
-              width="150"
+             
+              style="width:auto;min-width:200px;"
+            
             >
             </el-table-column>
           </el-table>
@@ -59,7 +86,7 @@ import { getRequest } from "@/utils/api";
 
 export default {
   name: "oldData",
-  props: ["dataAll", "dataName", "statisData"],
+  props: ["dataAll", "dataName", "statisData", "dataColumns"],
   data() {
     return {
       dataInfo: [],
@@ -71,7 +98,7 @@ export default {
       statisColumn: [],
       column: [],
       statis: [],
-      dataCondition:0,
+      dataCondition: 0,
     };
   },
   methods: {
@@ -81,9 +108,39 @@ export default {
       this.dataNow = this.dataAll.data;
 
       this.column = Object.keys(this.statisData);
-      this.statisColumn = Object.keys(this.statisData[this.column[0]]);
-      this.statisColumn.unshift("name");
-    
+      let tempColumn = Object.keys(this.statisData[this.column[0]]);
+      tempColumn.unshift("name");
+      for (let i = 0; i < tempColumn.length; i++) {
+        if (tempColumn[i] == "name") {
+          let tempObj = {
+            name: tempColumn[i],
+            label: "指标名",
+          };
+          this.statisColumn.push(tempObj);
+        }
+        if (tempColumn[i] == "missingRate") {
+          let tempObj = {
+            name: tempColumn[i],
+            label: "缺失率",
+          };
+          this.statisColumn.push(tempObj);
+        }
+        if (tempColumn[i] == "mean") {
+          let tempObj = {
+            name: tempColumn[i],
+            label: "平均值",
+          };
+          this.statisColumn.push(tempObj);
+        }
+        if (tempColumn[i] == "variance") {
+          let tempObj = {
+            name: tempColumn[i],
+            label: "方差",
+          };
+          this.statisColumn.push(tempObj);
+        }
+      }
+
       let index = 0;
       for (let key in this.statisData) {
         if (index < this.column.length - 1) {
@@ -112,31 +169,70 @@ export default {
         this.dataNow = response.data;
       });
     },
-    changeDataNow(val){
-      console.log(val)
-      if(val==1){
-            // let tempList =JSON.parse(this.$store.getters.getAllColummnData)
-            // console.log(tempList)
+    changeDataNow(val) {
+      let tempColumn = [];
+      if (val == "1") {
+        for (var i = 0; i < this.dataColumns.length; i++) {
+          if (this.dataColumns[i].columnisR) {
+            tempColumn.push(this.dataColumns[i].columnName);
+          }
+        }
+        this.dataColumn = tempColumn;
       }
-    }
+      if (val == "2") {
+        for (var i = 0; i < this.dataColumns.length; i++) {
+          if (this.dataColumns[i].columnisS) {
+            tempColumn.push(this.dataColumns[i].columnName);
+          }
+        }
+        this.dataColumn = tempColumn;
+      }
+      if (val == "3") {
+        for (var i = 0; i < this.dataColumns.length; i++) {
+          if (this.dataColumns[i].columnisX) {
+            tempColumn.push(this.dataColumns[i].columnName);
+          }
+        }
+        this.dataColumn = tempColumn;
+      }
+      if (val == "4") {
+        for (var i = 0; i < this.dataColumns.length; i++) {
+          if (this.dataColumns[i].columnisO) {
+            tempColumn.push(this.dataColumns[i].columnName);
+          }
+        }
+        this.dataColumn = tempColumn;
+      }
+      if (val == "5") {
+        this.dataColumn = Object.keys(this.dataAll.data[0]);
+      }
+    },
   },
   mounted() {
     this.dealdata();
   },
 };
 </script>
-<style>
-.table1 {
-  width: 100%;
-  height: 100%;
-}
+<style scoped>
+
 .table {
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-}
+  
 
+}
+.table1{
+  width:100%;
+     display: flex;
+    justify-content: center;
+  align-items: center;
+}
+ .el-table{
+   
+   width:auto
+ }
 .pagination {
   margin-top: 50px;
   display: flex;
@@ -145,5 +241,10 @@ export default {
 }
 .statable {
   width: auto;
+}
+.text {
+  color: black;
+  font-size: 20px;
+  font-weight: bold;
 }
 </style>

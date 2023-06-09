@@ -1,7 +1,8 @@
 <template>
   <div>
-    <el-header>
-      <h3>任务设置</h3>
+    <el-header >
+      <h3 v-if="head1">任务设置</h3>
+      <h3 v-if="head2">疾病画像</h3>
       <el-divider></el-divider>
     </el-header>
 
@@ -72,6 +73,14 @@
                 @current-change="handleCurrentChange"
                 style="width: auto"
                 border
+                     :cell-style="{ borderColor: '#C0C0C0', textAlign: 'center' }"
+            :header-cell-style="{
+              background: '#BBDEFB',
+              color: '#606266',
+              borderColor: '#C0C0C0',
+              textAlign: 'center',
+            }"
+            stripe
               >
                 <el-table-column
                   v-for="(item, index) in dataColumn"
@@ -83,7 +92,9 @@
                 </el-table-column>
               </el-table>
             </div>
+            <br>
             <el-pagination
+            style="margin-left: 40%"
               background
               class="pagination"
               layout="prev, pager, next"
@@ -183,6 +194,8 @@ export default {
       ],
       value1: [],
       value2: [],
+      head1:true,
+      head2:false,
 
       //数据选择-----------------------------------------------------------------------------------------------
       dataSelectForm: {
@@ -377,6 +390,8 @@ export default {
           } else if (stepIndex == 1) {
             this.showChart = !this.showChart;
             this.showStep = !this.showStep;
+            this.head1=!this.head1;
+            this.head2=!this.head2;
             this.tableisShow = !this.tableisShow;
             // this.showChart=!this.showChart
             // this.showStep=!this.showStep

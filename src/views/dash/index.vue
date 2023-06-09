@@ -34,29 +34,29 @@
                   <el-statistic
                     title="数据总量"
                     group-separator=","
-                    :value=dataAllNum
+                    :value="dataAllNum"
                   ></el-statistic>
                 </div>
               </el-col>
               <el-col :span="6" id="data_sta">
                 <div>
                   <el-progress type="circle" :percentage="100"></el-progress>
-                  <el-statistic title="指标总量" :value=insAllNum>
-                    <template slot="formatter">  </template>
+                  <el-statistic title="指标总量" :value="insAllNum">
+                    <template slot="formatter"> </template>
                   </el-statistic>
                 </div>
               </el-col>
-              <el-col
-                :span="6"
-                id="data_sta"
-              >
+              <el-col :span="6" id="data_sta">
                 <div>
-                  <el-progress type="circle" :percentage=missingAll*100></el-progress>
+                  <el-progress
+                    type="circle"
+                    :percentage="missingAll"
+                  ></el-progress>
                   <el-statistic
                     group-separator=","
                     :precision="2"
                     decimal-separator="."
-                    :value=missingAll*100
+                    :value="missingAll"
                     title="总体缺失率"
                   >
                     <template slot="prefix"> </template>
@@ -66,8 +66,15 @@
               </el-col>
               <el-col :span="6" id="data_sta">
                 <div>
-                  <el-progress type="circle" :percentage=effectiveall*100></el-progress>
-                  <el-statistic title="总体有效率" :value=effectiveall*100>
+                  <el-progress
+                    type="circle"
+                    :percentage="effectiveall"
+                  ></el-progress>
+                  <el-statistic
+                    title="总体有效率"
+                    :value="effectiveall"
+                    :precision="2"
+                  >
                     <template slot="suffix"> </template>
                   </el-statistic>
                 </div>
@@ -115,15 +122,14 @@
             <el-table-column prop="tableDate" label="创建时间">
             </el-table-column>
           </el-table>
-
         </el-card>
       </div>
       <div class="right">
         <el-card>
           <div slot="header" class="clearfix">
-            <span class="lineStyle">▍</span><span>系统登录信息</span>
+            <span class="lineStyle">▍</span><span>近七天数据增长趋势</span>
           </div>
-            <div id="login" style="width: 500px; height: 400px"></div>
+          <div id="increase" style="width: 500px; height: 400px"></div>
         </el-card>
       </div>
     </div>
@@ -139,12 +145,15 @@ export default {
     return {
       mychart: {},
       tableData2: [],
-      dataAllNum:0,
-      insAllNum:0,
-      missingAll:0,
-      effectiveall:0,
+      dataAllNum: 0,
+      insAllNum: 0,
+      missingAll: 0,
+      effectiveall: 0,
       line: null,
       patientNum: 200,
+      xdata: [],
+      ydata: [],
+
       quickEntry: [
         {
           title: "数据表管理",
@@ -189,26 +198,26 @@ export default {
   },
   methods: {
     quickLink(index) {
-      console.log(this.quickEntry[index].router);
       this.$router.replace(this.quickEntry[index].router);
     },
     chart1() {
-      var chartDom = document.getElementById("login");
-      this.mychart = this.$echarts.init(chartDom);
 
+      var chartDom = document.getElementById("increase");
+      this.mychart = this.$echarts.init(chartDom);
+      
       var option;
       option = {
         xAxis: {
           type: "category",
-          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          data: this.xdata,
         },
         yAxis: {
           type: "value",
         },
         series: [
           {
-            data: [120, 200, 150, 80, 70, 110, 130],
-            type: "bar",
+            data: this.ydata,
+            type: "line",
             showBackground: true,
             color: " #75AAF2",
             backgroundStyle: {
@@ -240,24 +249,40 @@ export default {
         }
       });
     },
-    getStatis(){
-      getRequest("/index/getStatisticaldData").then((response)=>{
-        this.dataAllNum=response.data['数据总量'];
-        this.insAllNum=response.data['指标总量'];
-        this.missingAll=response.data['总体缺失率'];
-        this.effectiveall=response.data['总体有效率'];
-      })
-    }
+    getStatis() {
+      getRequest("/index/getStatisticaldData").then((response) => {
+        this.dataAllNum = response.data["数据总量"];
+        this.insAllNum = response.data["指标总量"];
+        let tempMiss = response.data["总体缺失率"];
+        this.missingAll = parseFloat(parseFloat(tempMiss * 100).toFixed(2));
+        let tempAll = response.data["总体有效率"];
+        this.effectiveall = parseFloat(parseFloat(tempAll * 100).toFixed(2));
+      });
+    },
+    getIncrease() {
+      getRequest("/index/showTableTrend").then((response) => {
+        console.log(response.data);
+        this.xdata = Object.keys(response.data).sort();
+        for (let i in this.xdata) {
+          this.ydata.push(response.data[this.xdata[i]]);
+        }
+      this.chart1();
+      });
+
+    },
   },
   mounted() {
-    this.chart1();
     this.getStatis();
-    const that = this;
-    this.mychart.resize();
-    window.addEventListener("resize", () => {
-      that.mychart.resize();
-    });
+
     this.getAllData();
+    // this.getIncrease();
+   
+    this.getIncrease();
+    // const that = this;
+    // this.mychart.resize();
+    // window.addEventListener("resize", () => {
+    //   that.mychart.resize();
+    // });
   },
 };
 </script>

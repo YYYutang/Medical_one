@@ -7,10 +7,10 @@
             ><i class="el-icon-box"></i>人群队列数据特征表征软件</el-menu-item
           >
           <!--            <template slot="title">当前服务器：</template>-->
-          <el-menu-item index="2" style="float: right"
+          <el-menu-item index="2" style="float: right;color:black"
             ><i class="el-icon-close"></i>退出登录</el-menu-item
           >
-          <el-menu-item index="3" style="float: right"
+          <el-menu-item index="3" style="float: right;color:black"
             ><i class="el-icon-user"></i>欢迎你，xx</el-menu-item
           >
           <el-menu-item index="4" style="float: right"
@@ -65,7 +65,7 @@ export default {
     handleSelect(key) {
       if (key == 4) {
         this.$alert(
-          "多病种之间具有复杂关联关系，同时多种疾病可能存在某些相同的病征。本软件采用机器学习方法来挖掘多病种之间的复杂关联关系。本软件根据不同疾病的不同使用场景，能够完成数据选择，数据处理，特征选择，模型设置，模型预测等功能。",
+          "病种的指标存在维度过多的问题，可能导致后续的分析作业效果不佳，本软件提供一个通过机器学习算法将多维的指标转化成低维指标的平台。",
           "软件介绍",
           {
             confirmButtonText: "确定",
@@ -96,8 +96,15 @@ export default {
   /*解决侧边栏凸起问题*/
   border-right: none;
 }
+.el-menu-item.is-active {
+  background-color: rgb(114, 175, 245) !important;
+  color:white !important
+}
+/* .el-menu-demo{
+  background-color: #B3C0D1; 
+} */
 .header {
-  /*background-color: #B3C0D1;*/
+  /* background-color: #B3C0D1; */
   color: #333;
   text-align: center;
   line-height: 60px;
