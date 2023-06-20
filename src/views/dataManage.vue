@@ -27,10 +27,10 @@
           </el-option>
         </el-select>
       </div>
-      <el-button @click="clearFilter">清除</el-button>
+      <el-button @click="clearFilter" size="small">清除</el-button>
 
       <div id="top_right_buttons">
-        <el-button type="primary" @click="importData">导入数据表</el-button>
+        <el-button type="primary" @click="importData" size="small">导入数据表</el-button>
       </div>
     </div>
     <br />
@@ -45,9 +45,9 @@
                 data?.tableOrigin?.includes(value2))
           )
         "
-        style="width: 100%; color: black"
-        stripe
-        :header-cell-style="{ background: '#BBDEFB', color: '#606266' }"
+        style="width: 100%; "
+        :row-style="{height:'33px',lineHeight:'10px',padding:'0px'}"
+        :header-cell-style="{ background: '#58AAFF', color: '#fff', lineHeight:'12px',padding:'0px',height:'34px',textAlign:'center' }"
       >
         <el-table-column label="数据表" prop="tableName"> </el-table-column>
         <el-table-column label="数据来源" prop="tableOrigin"> </el-table-column>
@@ -61,7 +61,7 @@
           </template>
           <template slot-scope="scope">
             <el-button
-              size="mini"
+              size="small"
               type="danger"
               style="background: #1976d2; border: #1976d2"
               @click="handleDelete(scope.$index)"
@@ -409,6 +409,9 @@ export default {
 .feature{
   display: inline-block; 
     width: 200px;
+}
+.el-button{
+  size:small;
 }
 
 /*#importDataTable >>> .el-input__inner{*/

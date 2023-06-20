@@ -201,18 +201,21 @@ export default {
       this.$router.replace(this.quickEntry[index].router);
     },
     chart1() {
-
       var chartDom = document.getElementById("increase");
       this.mychart = this.$echarts.init(chartDom);
-      
+
       var option;
       option = {
         xAxis: {
           type: "category",
           data: this.xdata,
+          boundaryGap: false,
         },
         yAxis: {
           type: "value",
+        },
+        tooltip: {
+          trigger: "axis",
         },
         series: [
           {
@@ -266,9 +269,8 @@ export default {
         for (let i in this.xdata) {
           this.ydata.push(response.data[this.xdata[i]]);
         }
-      this.chart1();
+        this.chart1();
       });
-
     },
   },
   mounted() {
@@ -276,7 +278,7 @@ export default {
 
     this.getAllData();
     // this.getIncrease();
-   
+
     this.getIncrease();
     // const that = this;
     // this.mychart.resize();

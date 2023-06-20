@@ -50,7 +50,7 @@
           </el-form-item>
           <br />
           <el-form-item style="margin-left: 45%">
-            <el-button type="primary" @click="submitForm(active)"
+            <el-button type="primary" size="small" @click="submitForm(active)"
               >下一步</el-button
             >
           </el-form-item>
@@ -64,20 +64,23 @@
           ref="oneSelectForm"
           label-position="top"
         >
-          <el-form-item label="选择一个病人：" prop="selectedData">
-            <div class="table">
+          <el-form-item  prop="selectedData" >
+            <h3 style="margin-left: 20%">选择一个病人：</h3>
+            <div class="table" style="margin-left: 20%">
               <el-table
                 :data="tableData"
                 v-model="oneSelectForm.formData.selectedData"
                 highlight-current-row
                 @current-change="handleCurrentChange"
-                style="width: auto"
+                style="width: auto;"
                 border
-                     :cell-style="{ borderColor: '#C0C0C0', textAlign: 'center' }"
+                     :row-style="{ height: '33px', lineHeight: '10px', padding: '0px' }"
             :header-cell-style="{
-              background: '#BBDEFB',
-              color: '#606266',
-              borderColor: '#C0C0C0',
+              background: '#58AAFF',
+              color: '#fff',
+              lineHeight: '12px',
+              padding: '0px',
+              height: '34px',
               textAlign: 'center',
             }"
             stripe
@@ -108,8 +111,8 @@
 
           <br />
           <el-form-item style="margin-left: 45%">
-            <el-button @click="stepBack(active)">上一步</el-button>
-            <el-button type="primary" @click="submitForm(active)"
+            <el-button  size="small" @click="stepBack(active)">上一步</el-button>
+            <el-button type="primary" size="small" @click="submitForm(active)"
               >完成</el-button
             >
           </el-form-item>
@@ -284,6 +287,7 @@ export default {
             top: "20%",
             bottom: "20%",
           },
+        
           xAxis: {},
           yAxis: {
             data: [
@@ -346,6 +350,7 @@ export default {
           name:'liver',
         })
         }
+     
         myChart.on("mouseover", function (event) {
           myChart.dispatchAction({
             type: "highlight",
@@ -508,7 +513,9 @@ export default {
   left: 15%;
 }
 .table {
-  width: auto;
+  width: 1100px;
+   justify-content: center;
+  align-items: center;
 }
 .charts {
 

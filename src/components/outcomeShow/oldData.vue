@@ -2,7 +2,7 @@
   <div>
     <div>
       <div class="table">
-        <p class="text">数据统计:</p>
+        <p class="text">原始数据统计量:</p>
         <br />
         <div>
           <el-table
@@ -10,13 +10,8 @@
             height="450"
             style="width: auto"
             border
-            :cell-style="{ borderColor: '#C0C0C0', textAlign: 'center' }"
-            :header-cell-style="{
-              background: '#BBDEFB',
-              color: '#606266',
-              borderColor: '#C0C0C0',
-              textAlign: 'center',
-            }"
+            :row-style="{height:'33px',lineHeight:'10px',padding:'0px'}"
+        :header-cell-style="{ background: '#58AAFF', color: '#fff', lineHeight:'12px',padding:'0px',height:'34px',textAlign:'center' }"
             stripe
           >
             <el-table-column
@@ -47,13 +42,8 @@
             :data="dataNow"
             border
             class="tableDown"
-            :cell-style="{ borderColor: '#C0C0C0', textAlign: 'center' }"
-            :header-cell-style="{
-              background: '#BBDEFB',
-              color: '#606266',
-              borderColor: '#C0C0C0',
-              textAlign: 'center',
-            }"
+          :row-style="{height:'33px',lineHeight:'10px',padding:'0px'}"
+        :header-cell-style="{ background: '#58AAFF', color: '#fff', lineHeight:'12px',padding:'0px',height:'34px',textAlign:'center' }"
           >
             <el-table-column
               v-for="(item, index) in dataColumn"
@@ -224,7 +214,7 @@ export default {
 
 }
 .table1{
-  width:100%;
+  width:1200px;
      display: flex;
     justify-content: center;
   align-items: center;

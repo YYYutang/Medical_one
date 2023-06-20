@@ -25,6 +25,7 @@
               :dataNewColumns="dataNewColumns"
               :dataName="dataSelectForm.formData.selectedData"
               :columnName="columnSelectForm.formData.selectedData"
+              :chartDatay="chartDatay"
             ></newData
           ></el-tab-pane>
         </el-tabs>
@@ -70,9 +71,9 @@
             </el-row>
           </el-form-item>
           <br />
-          <el-form-item class="button1">
-            <el-button @click="stepBack(active)">上一步</el-button>
-            <el-button type="primary" @click="submitForm(active)"
+          <el-form-item class="button1" style="margin-left: 38%">
+            <el-button size="small" @click="stepBack(active)">上一步</el-button>
+            <el-button size="small" type="primary" @click="submitForm(active)"
               >下一步</el-button
             >
           </el-form-item>
@@ -198,9 +199,9 @@
             </el-checkbox-group>
           </el-form-item>
           <br />
-          <el-form-item>
-            <el-button @click="stepBack(active)">上一步</el-button>
-            <el-button type="primary" @click="submitForm(active)"
+          <el-form-item class="button1" style="margin-left: 38%">
+            <el-button size="small" @click="stepBack(active)">上一步</el-button>
+            <el-button size="small" type="primary" @click="submitForm(active)"
               >下一步</el-button
             >
           </el-form-item>
@@ -216,35 +217,65 @@
           label-position="top"
         >
           <el-form-item label="选择算法模型" prop="algoName">
-            <el-row :gutter="50">
+            <el-row :gutter="60">
+                  <h5 class="text">无监督类算法</h5>
               <el-radio-group
                 v-model="algoForm.formData.algoName"
                 prop="selectedData"
               >
                 <el-col
                   :span="8"
-                  v-for="item in algoOptions"
+                  v-for="item in algoOptions1"
                   :key="item.algoName"
-                >
+                > 
                   <el-radio :label="item.algoName" border>{{
                     item.algoName
                   }}</el-radio>
                 </el-col>
               </el-radio-group>
             </el-row>
-          </el-form-item>
-
-          <el-form-item>
-            <knn
-              v-if="algoForm.formData.algoName == 'KNN'"
-              @outputParams="outputParams"
-            ></knn>
-            <k-means v-if="algoForm.formData.algoName == 2"></k-means>
+            <br>
+            <el-row :gutter="60">
+                  <h5 class="text">有监督类算法</h5>
+              <el-radio-group
+                v-model="algoForm.formData.algoName"
+                prop="selectedData"
+              >
+                <el-col
+                  :span="8"
+                  v-for="item in algoOptions2"
+                  :key="item.algoName"
+                > 
+                  <el-radio :label="item.algoName" border>{{
+                    item.algoName
+                  }}</el-radio>
+                </el-col>
+              </el-radio-group>
+            </el-row>
+            <br>
+            <el-row :gutter="60">
+                  <h5 class="text">深度学习算法</h5>
+              <el-radio-group
+                v-model="algoForm.formData.algoName"
+                prop="selectedData"
+              >
+                <el-col
+                  :span="9"
+                  v-for="item in algoOptions3"
+                  :key="item.algoName"
+                  style="marigin-right:5px"
+                > 
+                  <el-radio :label="item.algoName" border >{{
+                    item.algoName
+                  }}</el-radio>
+                </el-col>
+              </el-radio-group>
+            </el-row>
           </el-form-item>
           <br />
-          <el-form-item class="button1">
-            <el-button @click="stepBack(active)">上一步</el-button>
-            <el-button type="primary" @click="submitForm(active)"
+          <el-form-item class="button1" style="margin-left: 38%">
+            <el-button size="small" @click="stepBack(active)">上一步</el-button>
+            <el-button  size="small" type="primary" @click="submitForm(active)"
               >完成</el-button
             >
           </el-form-item>
@@ -283,22 +314,53 @@ export default {
       sociolOptions: [],
       otherOptions: [],
 
-      algoOptions: [
+      algoOptions1: [
         {
           id: 1,
-          algoName: "PCA",
+          algoName: "PCA(主成分分析)",
+          algoType:"1"
         },
         {
           id: 2,
-          algoName: "ICA",
+          algoName: "ICA(独立成分分析)",
+          algoType:"1"
         },
         {
           id: 3,
           algoName: "因子分析",
+          algoType:"1"
+        },],
+        algoOptions2: [
+            {
+          id: 4,
+          algoName: "LDA(线性判别分析)",
+          algoType:"2"
+        },
+          {
+          id: 5,
+          algoName: "稀疏表示学习",
+          algoType:"2"
+        },
+         {
+          id: 6,
+          algoName: "神经网络",
+          algoType:"2"
+        },],
+        algoOptions3: [
+        {
+          id: 7,
+          algoName: "CNN(卷积神经网络)",
+          algoType:"3"
+        },
+         {
+          id: 8,
+          algoName: "RNN(循环神经网络)",
+          algoType:"3"
         },
       ],
       value1: [],
       value2: [],
+      chartDatay:[],
       formArray: ["dataSelectForm", "columnSelectForm", "algoForm"],
       active: 0,
 
@@ -458,11 +520,18 @@ export default {
 
             getRequest("feature/runAi/" + params.modelTable).then(
               (response) => {
-                for (let i in response.data) {
+                console.log(response)
+                for (let i in response.data[0]) {
                   var num = parseInt(i) + 1;
                   this.dataNewColumns.push("主成分" + num);
-                  this.dataNew["主成分" + num] = response.data[i];
+                  this.dataNew["主成分" + num] = response.data[0][i];
+              
                 }
+                   for (let i in response.data[1]) {
+                  this.chartDatay.push(response.data[1][i])
+              
+                }
+                  
               }
             );
           }
@@ -528,22 +597,18 @@ export default {
 
 #step {
   width: 80%;
-  height: 80%;
   position: absolute;
   top: 250px;
 }
 #stepcontain {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 44%;
-  left: 38%;
+
+  top: 340px;
+  left: 37%;
 }
 
 .button1 {
   position: absolute;
-  width: 100%;
-  height: 100%;
   margin-top: 20px;
   left: 10%;
 }

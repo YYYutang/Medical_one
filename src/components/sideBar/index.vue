@@ -2,22 +2,21 @@
   <div>
     <el-container class="con">
       <el-header class="header">
-        <el-menu class="el-menu-demo" mode="horizontal" @select="handleSelect">
-          <el-menu-item index="1" style="color: cornflowerblue"
+        <el-menu class="el-menu-demo" mode="horizontal" @select="handleSelect" active-text-color="#ffd04b" background-color="#071135">
+          <el-menu-item index="1" style="color:#5292D8;font-size:20px"
             ><i class="el-icon-box"></i>人群队列数据特征表征软件</el-menu-item
           >
           <!--            <template slot="title">当前服务器：</template>-->
-          <el-menu-item index="2" style="float: right;color:black"
+          <el-menu-item index="2" style="float: right; color: #fff;font-size:14px"
             ><i class="el-icon-close"></i>退出登录</el-menu-item
           >
-          <el-menu-item index="3" style="float: right;color:black"
+          <el-menu-item index="3" style="float: right; color: #fff;font-size:14px"
             ><i class="el-icon-user"></i>欢迎你，xx</el-menu-item
           >
           <el-menu-item index="4" style="float: right"
             ><i class="el-icon-question"></i
           ></el-menu-item>
-          <!--          <el-menu-item index="3" disabled>消息中心</el-menu-item>-->
-          <!--          <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>-->
+          
         </el-menu>
       </el-header>
       <el-container>
@@ -27,19 +26,26 @@
             router
             class="el-menu-vertical-demo"
             @open="handleOpen"
+            background-color="#071135"
+            text-color="#fff"
+            active-text-color="#ffd04b"
+              font-size="14px"
           >
             <el-menu-item index="/dash">
               <i class="el-icon-menu"></i>
               <span slot="title">首页</span>
             </el-menu-item>
             <el-menu-item index="/dataManage">
-            <i class="el-icon-s-data"></i>
-            数据管理</el-menu-item>
+              <i class="el-icon-s-data"></i>
+              数据管理</el-menu-item
+            >
             <el-menu-item index="/represent">
-            <i class="el-icon-data-line"></i>
-            疾病的特征性指标</el-menu-item>
+              <i class="el-icon-data-line"></i>
+              疾病的特征性指标</el-menu-item
+            >
             <el-menu-item index="/visualization">
-            <i class="el-icon-s-custom"></i>疾病画像</el-menu-item>
+              <i class="el-icon-s-custom"></i>疾病画像</el-menu-item
+            >
           </el-menu>
         </el-aside>
         <el-main class="main">
@@ -69,12 +75,7 @@ export default {
           "软件介绍",
           {
             confirmButtonText: "确定",
-            callback: (action) => {
-              this.$message({
-                type: "info",
-                message: `action: ${action}`,
-              });
-            },
+            
           }
         );
       }
@@ -95,23 +96,25 @@ export default {
   /*height: 100vh;*/
   /*解决侧边栏凸起问题*/
   border-right: none;
+
+
 }
-.el-menu-item.is-active {
-  background-color: rgb(114, 175, 245) !important;
-  color:white !important
-}
+/* .el-menu-demo.is-active {
+  background-color: #333 !important;
+  color: #ffd04b !important;
+} */
 /* .el-menu-demo{
-  background-color: #B3C0D1; 
+  background-color: #071135; 
 } */
 .header {
-  /* background-color: #B3C0D1; */
-  color: #333;
+  background-color: #071135;
+
   text-align: center;
   line-height: 60px;
 }
 
 .side {
-  /*background-color: #071135;*/
+  background-color: #071135;
   color: #333;
   /*text-align: center;*/
   /*line-height: 200px;*/

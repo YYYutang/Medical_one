@@ -1,19 +1,22 @@
 <template>
   <div>
     <div id="maintest">
-      <div class="tabel">
-        <div class="table1">
+      <div>
+        <div class="table1" >
+
           <p class="text">选择的原始数据:</p>
           <br />
           <el-table
             :data="dataChooseNow"
             style="width: auto"
             border
-            :cell-style="{ borderColor: '#C0C0C0', textAlign: 'center' }"
+            :row-style="{ height: '33px', lineHeight: '10px', padding: '0px' }"
             :header-cell-style="{
-              background: '#BBDEFB',
-              color: '#606266',
-              borderColor: '#C0C0C0',
+              background: '#58AAFF',
+              color: '#fff',
+              lineHeight: '12px',
+              padding: '0px',
+              height: '34px',
               textAlign: 'center',
             }"
             stripe
@@ -28,6 +31,7 @@
             >
             </el-table-column>
           </el-table>
+      
           <br />
           <el-pagination
             background
@@ -49,14 +53,15 @@
             :data="dataNewNow"
             :max-height="tableHeight"
             border
-            :cell-style="{ borderColor: '#C0C0C0', textAlign: 'center' }"
+            :row-style="{ height: '33px', lineHeight: '10px', padding: '0px' }"
             :header-cell-style="{
-              background: '#BBDEFB',
-              color: '#606266',
-              borderColor: '#C0C0C0',
+              background: '#58AAFF',
+              color: '#fff',
+              lineHeight: '12px',
+              padding: '0px',
+              height: '34px',
               textAlign: 'center',
             }"
-            stripe
           >
             <el-table-column
               v-for="(item, index) in dataNewColumns"
@@ -101,7 +106,14 @@ import * as echarts from "echarts";
 import { getRequest } from "@/utils/api";
 export default {
   name: "newData",
-  props: ["dataChoose", "dataNew", "columnName", "dataName", "dataNewColumns"],
+  props: [
+    "dataChoose",
+    "dataNew",
+    "chartDatay",
+    "columnName",
+    "dataName",
+    "dataNewColumns",
+  ],
   data() {
     return {
       dataColumn: [],
@@ -122,30 +134,19 @@ export default {
       let myChart2 = echarts.init(document.getElementById("chart2"));
       let option1 = {
         title: {
-          text: "主成分分析",
+          text: "主成分分析得分",
           left: "center",
         },
         xAxis: {
           type: "category",
-          data: [
-            "主成分1",
-            "主成分2",
-            "主成分3",
-            "主成分4",
-            "主成分5",
-            "主成分6",
-            "主成分7",
-            "主成分8",
-            "主成分9",
-            "主成分10",
-          ],
+          data: this.dataNewColumns,
         },
         yAxis: {
           type: "value",
         },
         series: [
           {
-            data: [5.6, 7.8, 5.9, 8, 9, 7.8, 8.4, 9.6, 8.8, 9.4],
+            data: this.chartDatay,
             type: "bar",
             showBackground: true,
             color: "#75AAF2",
@@ -154,30 +155,47 @@ export default {
       };
       let option2 = {
         title: {
-          text: "Precision-Recall分析",
+          text: "不同算法结果对比",
           left: "center",
         },
         tooltip: {
           trigger: "axis",
-          formatter: "Recall��{b} <br>Precision: {c}%",
+          axisPointer: {
+            type: "shadow",
+          },
+        },
+        legend: { left: "right" },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true,
         },
         xAxis: {
-          name: "Recall",
-          type: "category",
-          boundaryGap: false,
-          data: [0, 0.2, 0.4, 0.6, 0.8, 1],
+          type: "value",
+          boundaryGap: [0, 0.01],
         },
         yAxis: {
-          name: "Precision",
-          type: "value",
+          type: "category",
+          data: ["执行算法前指标数", "执行算法后指标数"],
         },
         series: [
           {
-            data: [0.4, 0.5, 0.44, 0.6, 0.65, 0.66, 0.64],
-            type: "line",
+            name: "PCA",
+            type: "bar",
+            data: [7, 4],
+          },
+          {
+            name: "ICA",
+            type: "bar",
+            data: [7, 5],
+          },
+          {
+            name: "因子分析",
+            type: "bar",
+            data: [7, 4],
           },
         ],
-        color: "#75AAF2",
       };
       myChart1.setOption(option1);
       myChart2.setOption(option2);
@@ -231,9 +249,12 @@ export default {
   justify-content: center;
   align-items: center;
 }
+.el-table {
+  width: auto;
+}
 
 .table1 {
-  width: 100%;
+   width: 800px;
   display: flex;
   justify-content: center;
   flex-direction: column;
