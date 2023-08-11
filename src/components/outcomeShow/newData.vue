@@ -26,7 +26,6 @@
               :key="index"
               :label="item"
               :prop="item"
-              fixed
               width="150"
             >
             </el-table-column>
@@ -48,7 +47,6 @@
         <div class="table1">
           <p class="text">处理后的数据:</p>
           <br />
-
           <el-table
             :data="dataNewNow"
             :max-height="tableHeight"
@@ -68,22 +66,10 @@
               :key="index"
               :label="item"
               :prop="item"
-              fixed
               width="150"
             >
             </el-table-column>
           </el-table>
-
-          <!-- <el-pagination
-            background
-            class="pagination"
-            layout="prev, pager, next"
-            :current-page="currentPage2"
-            :page-size="pageSize"
-            @current-change="handleCurrentChange2"
-            :total="allPage2"
-          >
-          </el-pagination> -->
         </div>
       </div>
       <div>
@@ -119,10 +105,8 @@ export default {
       dataColumn: [],
       dataColumn2: [],
       currentPage: 1,
-      // currentPage2: 1,
       pageSize: 10,
       allPage: 0,
-      // allPage2: 0,
       dataChooseNow: [],
       dataNewNow: [],
       tableHeight: 400,
@@ -183,7 +167,7 @@ export default {
           {
             name: "PCA",
             type: "bar",
-            data: [7, 4],
+            data: [7, 6],
           },
           {
             name: "ICA",

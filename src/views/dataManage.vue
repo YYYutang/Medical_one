@@ -55,20 +55,7 @@
         <el-table-column label="存储大小" prop="tableSize"> </el-table-column>
         <el-table-column label="创建人" prop="tablePeople"> </el-table-column>
         <el-table-column label="创建时间" prop="tableDate"> </el-table-column>
-        <el-table-column align="center">
-          <template slot="header">
-            <span>操作</span>
-          </template>
-          <template slot-scope="scope">
-            <el-button
-              size="small"
-              type="danger"
-              style="background: #1976d2; border: #1976d2"
-              @click="handleDelete(scope.$index)"
-              >删除</el-button
-            >
-          </template>
-        </el-table-column>
+        
       </el-table>
     </div>
 
@@ -307,9 +294,7 @@ export default {
       // return isJPG && isLt2M;
       return isCSV;
     },
-    test() {
-      console.log(this.value2);
-    },
+
     submitTable() {
       this.selectVisible = true;
       //   const filedMap = new Map();
@@ -335,6 +320,7 @@ export default {
       });
     },
     getFile1(data) {
+      console.log(data)
       const file = new FormData();
       file.append("file", data.file);
       const options = {

@@ -20,6 +20,7 @@
               :label="item.label"
               :prop="item.name"
               width="150"
+              align="center"
             >
             </el-table-column>
           </el-table>
@@ -50,9 +51,8 @@
               :key="index"
               :label="item"
               :prop="item"
-             
+             align="center"
               style="width:auto;min-width:200px;"
-            
             >
             </el-table-column>
           </el-table>
@@ -96,7 +96,6 @@ export default {
       this.dataColumn = Object.keys(this.dataAll.data[0]);
       this.allPage = this.dataAll.total * 10;
       this.dataNow = this.dataAll.data;
-
       this.column = Object.keys(this.statisData);
       let tempColumn = Object.keys(this.statisData[this.column[0]]);
       tempColumn.unshift("name");

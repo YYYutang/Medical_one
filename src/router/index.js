@@ -5,14 +5,14 @@ import dash from '@/views/dash/index.vue'
 import represent from "@/views/represent.vue";
 import visualization from "@/views/visualization.vue";
 import dataManage from "@/views/dataManage.vue";
-
+import introduce from"@/views/introduce/introduce.vue"
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    redirect: '/dash',
+    redirect: '/introduce',
     name: 'first',
     component: SideBar,
     children: [{
@@ -34,7 +34,11 @@ const routes = [
       name: 'dataManage',
       component: dataManage,
     },
-
+    {
+      path: '/introduce',
+      name: 'introduce',
+      component: introduce,
+    },
     ]
   },
 ]

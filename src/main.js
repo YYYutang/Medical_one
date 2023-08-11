@@ -5,6 +5,7 @@ import store from './store'
 import ElementUI from 'element-ui'
 import * as echarts from "echarts"
 import $ from 'jquery'
+import  './assets/index'
 import 'element-ui/lib/theme-chalk/index.css';
 import axios from 'axios';
 import { getRequest } from './utils/api';

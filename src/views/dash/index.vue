@@ -30,19 +30,27 @@
             <el-row :gutter="30">
               <el-col :span="6" id="data_sta">
                 <div>
-                  <el-progress type="circle" :percentage="100"></el-progress>
-                  <el-statistic
-                    title="数据总量"
-                    group-separator=","
-                    :value="dataAllNum"
-                  ></el-statistic>
+                  <el-progress
+                    type="circle"
+                    :percentage="100"
+                   
+                    :format="text"
+                  ></el-progress>
+                  <el-statistic title="数据总量" :value="dataAllNum">
+                    <template slot="suffix"> 条 </template>
+                  </el-statistic>
                 </div>
               </el-col>
               <el-col :span="6" id="data_sta">
                 <div>
-                  <el-progress type="circle" :percentage="100"></el-progress>
+                  <el-progress
+                    type="circle"
+                    :percentage="100"
+                      :format="text2"
+                  ></el-progress>
                   <el-statistic title="指标总量" :value="insAllNum">
-                    <template slot="formatter"> </template>
+                    <template slot="formatter"> {{ insAllNum }}</template>
+                    <template slot="suffix"> 个 </template>
                   </el-statistic>
                 </div>
               </el-col>
@@ -59,8 +67,7 @@
                     :value="missingAll"
                     title="总体缺失率"
                   >
-                    <template slot="prefix"> </template>
-                    <template slot="suffix"> </template>
+                    <template slot="suffix">% </template>
                   </el-statistic>
                 </div>
               </el-col>
@@ -75,7 +82,7 @@
                     :value="effectiveall"
                     :precision="2"
                   >
-                    <template slot="suffix"> </template>
+                    <template slot="suffix">% </template>
                   </el-statistic>
                 </div>
               </el-col>
@@ -145,7 +152,7 @@ export default {
     return {
       mychart: {},
       tableData2: [],
-      dataAllNum: 0,
+      dataAllNum: 2,
       insAllNum: 0,
       missingAll: 0,
       effectiveall: 0,
@@ -161,14 +168,14 @@ export default {
           router: "/dataManage",
         },
         {
-          title: "疾病的特征性指标",
+          title: "疾病的特征指标表征",
           img: require("../../assets/mutipile.png"),
-          router: "/represent.vue",
+          router: "/represent",
         },
         {
-          title: "疾病画像",
+          title: "病人画像",
           img: require("../../assets/feiai.png"),
-          router: "/visualization.vue",
+          router: "/visualization",
         },
         { title: "其他功能", img: require("../../assets/other.png") },
       ],
@@ -272,6 +279,12 @@ export default {
         this.chart1();
       });
     },
+    text(percentage) {
+      return `${this.dataAllNum}`;
+    },
+    text2(percentage){
+       return `${this.insAllNum}`;
+    }
   },
   mounted() {
     this.getStatis();
@@ -315,6 +328,7 @@ export default {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+  margin-top:20px
 }
 .topBigDiv .left .quickEntryBox .singleBox {
   /*border: 1px red solid;*/

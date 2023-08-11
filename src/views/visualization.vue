@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-header >
+    <el-header>
       <h3 v-if="head1">任务设置</h3>
       <h3 v-if="head2">疾病画像</h3>
       <el-divider></el-divider>
@@ -64,7 +64,7 @@
           ref="oneSelectForm"
           label-position="top"
         >
-          <el-form-item  prop="selectedData" >
+          <el-form-item prop="selectedData">
             <h3 style="margin-left: 20%">选择一个病人：</h3>
             <div class="table" style="margin-left: 20%">
               <el-table
@@ -72,18 +72,22 @@
                 v-model="oneSelectForm.formData.selectedData"
                 highlight-current-row
                 @current-change="handleCurrentChange"
-                style="width: auto;"
+                style="width: auto"
                 border
-                     :row-style="{ height: '33px', lineHeight: '10px', padding: '0px' }"
-            :header-cell-style="{
-              background: '#58AAFF',
-              color: '#fff',
-              lineHeight: '12px',
-              padding: '0px',
-              height: '34px',
-              textAlign: 'center',
-            }"
-            stripe
+                :row-style="{
+                  height: '33px',
+                  lineHeight: '10px',
+                  padding: '0px',
+                }"
+                :header-cell-style="{
+                  background: '#58AAFF',
+                  color: '#fff',
+                  lineHeight: '12px',
+                  padding: '0px',
+                  height: '34px',
+                  textAlign: 'center',
+                }"
+                stripe
               >
                 <el-table-column
                   v-for="(item, index) in dataColumn"
@@ -95,9 +99,9 @@
                 </el-table-column>
               </el-table>
             </div>
-            <br>
+            <br />
             <el-pagination
-            style="margin-left: 40%"
+              style="margin-left: 40%"
               background
               class="pagination"
               layout="prev, pager, next"
@@ -111,7 +115,7 @@
 
           <br />
           <el-form-item style="margin-left: 45%">
-            <el-button  size="small" @click="stepBack(active)">上一步</el-button>
+            <el-button size="small" @click="stepBack(active)">上一步</el-button>
             <el-button type="primary" size="small" @click="submitForm(active)"
               >完成</el-button
             >
@@ -120,41 +124,15 @@
       </div>
 
       <div v-show="showChart">
-        <div  class="chooseBar">
-         <span style="margin-right:20px">请选择指标</span>
-        
-        <el-select v-model="value1" placeholder="请选择肾脏相关的指标" @change="changeKidney">
-          <el-option
-            v-for="item in kidneyFormalData"
-            :key="item.name"
-            :label="item.nameCH"
-            :value="item.nameCH"
-            
-          >
-          </el-option>
-        </el-select>
-
-        <el-select
-          v-model="value2"
-          collapse-tags
-          style="margin-left: 20px"
-          placeholder="请选择肝脏相关的指标"
-          @change="changeLiver"
-        >
-          <el-option
-            v-for="item in liverFormalData"
-            :key="item.name"
-            :label="item.nameCH"
-            :value="item.nameCH"
-          >
-          </el-option>
-        </el-select>
-        </div>
-        <div></div>
         <div
           id="chart"
           class="charts"
-          style="width: 1000px; height: 800px"
+          style="width: 700px; height: 600px"
+        ></div>
+        <div
+          id="barChart"
+          class="charts"
+          style="width: 700px; height: 600px"
         ></div>
       </div>
     </el-container>
@@ -176,29 +154,35 @@ export default {
       allPage: 0,
       dataColumn: [],
       dataOptions: [],
-      healthDataLow: [0, 0, 0, 0, 3.2, 0, 0],
-      healthDataHigh: [0, 0, 0, 0, 3.8, 0, 40],
+      healthDataLow: [3.2, 3.2, 50, 100],
+      healthDataHigh: [7.1, 7.0, 90, 170],
       patientData: [],
       formArray: ["dataSelectForm", "oneSelectForm"],
       active: 0,
       currentRow: null,
       tableData: [],
-      
+      baryData: [],
+      barTitle: "肾脏指标与健康人对比情况",
+      kidneyPatient: [],
+      liverPatient: [],
+      kidneyAbnormal: 0,
+      liverAbnormal: 0,
       kidneyFormalData: [
-        { name: "BUN", min: 3.2, max: 7.1,nameCH:"血尿素氮" },
-        { name: "BU", min: 3.2, max: 7.0 ,nameCH:"血尿素" },
-        { name: "SCR", min: 50, max: 90,nameCH:"血肌酐"  },
-        { name: "UCR", min: 100, max: 170 ,nameCH:"尿肌酐" }],
-      liverFormalData:[
-        { name: "ALT", min: 0, max: 40 ,nameCH:"谷丙转氨酶" },
-        { name: "AST", min: 0, max: 35 ,nameCH:"谷草转氨酶" },
-        { name: "GGT", min: 10, max: 45 ,nameCH:"谷氨酰胺转移酶" },
-        { name: "ALP", min: 45, max: 125 ,nameCH:"碱性磷酸酶" },
+        { name: "BUN", min: 3.2, max: 7.1, nameCH: "血尿素氮" },
+        { name: "BU", min: 3.2, max: 7.0, nameCH: "血尿素" },
+        { name: "SCR", min: 50, max: 90, nameCH: "血肌酐" },
+        { name: "UCR", min: 100, max: 170, nameCH: "尿肌酐" },
+      ],
+      liverFormalData: [
+        { name: "ALT", min: 0, max: 40, nameCH: "谷丙转氨酶" },
+        { name: "AST", min: 0, max: 35, nameCH: "谷草转氨酶" },
+        { name: "GGT", min: 10, max: 45, nameCH: "谷氨酰胺转移酶" },
+        { name: "ALP", min: 45, max: 125, nameCH: "碱性磷酸酶" },
       ],
       value1: [],
       value2: [],
-      head1:true,
-      head2:false,
+      head1: true,
+      head2: false,
 
       //数据选择-----------------------------------------------------------------------------------------------
       dataSelectForm: {
@@ -248,16 +232,40 @@ export default {
     drawChart() {
       var option;
       let myChart = echarts.init(document.getElementById("chart"));
+      let barChart = echarts.init(document.getElementById("barChart"));
       const that = this;
+
       $.get("./pic.svg", function (svg) {
         echarts.registerMap("organ_diagram", { svg: svg });
         option = {
-          tooltip: {},
+          tooltip: {
+            trigger: "item",
+            formatter: function (args) {
+              if(args.name=='kidney'){
+              return args.name+"处的危险指标数："+that.kidneyAbnormal+"个";
+              }
+                if(args.name=='liver'){
+              return args.name+"处的危险指标数："+that.liverAbnormal+"个";
+              }
+            },
+          },
           geo: {
             left: 10,
             right: "50%",
             map: "organ_diagram",
             selectedMode: "multiple",
+tooltip: {
+            trigger: "item",
+            formatter: function (args) {
+    
+              if(args.name=='kidney'){
+              return args.name+"处的危险指标数："+that.kidneyAbnormal+"个";
+              }
+                if(args.name=='liver'){
+              return args.name+"处的危险指标数："+that.liverAbnormal+"个";
+              }
+            },
+          },
             emphasis: {
               focus: "self",
               itemStyle: {
@@ -270,13 +278,14 @@ export default {
                 textBorderWidth: 2,
               },
             },
+
             blur: {},
             select: {
               itemStyle: {
                 color: "#b50205",
               },
               label: {
-                show: false,
+                show: true,
                 textBorderColor: "#fff",
                 textBorderWidth: 2,
               },
@@ -287,70 +296,59 @@ export default {
             top: "20%",
             bottom: "20%",
           },
-        
-          xAxis: {},
-          yAxis: {
-            data: [
-              "heart",
-              "large-intestine",
-              "small-intestine",
-              "spleen",
-              "kidney",
-              "lung",
-              "liver",
-            ],
-          },
-          series: [
-            {
-              name: "健康人",
-              type: "bar",
-              stack: "Total",
-              emphasis: {
-                focus: "self",
-              },
-              itemStyle: {
-                borderColor: "transparent",
-                color: "transparent",
-              },
-              data: that.healthDataLow,
-            },
-            {
-              name: "健康人",
-              type: "bar",
-              stack: "Total",
-              emphasis: {
-                focus: "self",
-              },
-              data: that.healthDataHigh,
-            },
-            {
-              name: "患者",
-              type: "bar",
-              emphasis: {
-                focus: "self",
-              },
-              data: that.patientData,
-            },
-          ],
         };
-
         myChart.setOption(option);
-        if(that.patientData[4]<that.healthDataLow[4]||that.patientData[4]>that.healthDataHigh[4]+that.healthDataLow[4]){
-   
-        myChart.dispatchAction({
-          type:'highlight',
-          geoIndex:0,
-          name:'kidney',
-        })
+        if (that.kidneyAbnormal > 0) {
+          myChart.dispatchAction({
+            type: "highlight",
+            geoIndex: 0,
+            name: "kidney",
+          });
         }
-        if(that.patientData[6]<that.healthDataLow[6]||that.patientData[6]>that.healthDataHigh[6]+that.healthDataLow[6]){
-        myChart.dispatchAction({
-          type:'highlight',
-          geoIndex:0,
-          name:'liver',
-        })
+        if (that.liverAbnormal > 0) {
+          myChart.dispatchAction({
+            type: "highlight",
+            geoIndex: 0,
+            name: "liver",
+          });
         }
-     
+        myChart.on("click", function (event) {
+          if (event.name == "kidney") {
+            that.patientData = that.kidneyPatient;
+            let nameArr = that.kidneyFormalData.map((item) => {
+              return item.nameCH;
+            });
+            that.baryData = nameArr;
+            let minArr = that.kidneyFormalData.map((item) => {
+              return item.min;
+            });
+            that.healthDataLow = minArr;
+            let maxArr = that.kidneyFormalData.map((item) => {
+              return item.max;
+            });
+            that.healthDataHigh = maxArr;
+            that.barTitle = "肾脏指标与健康人对比情况";
+          }
+          if (event.name == "liver") {
+            let select = that.oneSelectForm.formData.selectedData;
+
+            that.patientData = that.liverPatient;
+            let nameArr = that.liverFormalData.map((item) => {
+              return item.nameCH;
+            });
+            that.baryData = nameArr;
+            let minArr = that.liverFormalData.map((item) => {
+              return item.min;
+            });
+            that.healthDataLow = minArr;
+            let maxArr = that.liverFormalData.map((item) => {
+              return item.max;
+            });
+            that.healthDataHigh = maxArr;
+            that.barTitle = "肝脏指标与健康人对比情况";
+          }
+          that.drawChart();
+        });
         myChart.on("mouseover", function (event) {
           myChart.dispatchAction({
             type: "highlight",
@@ -366,8 +364,87 @@ export default {
           });
         });
       });
+      var barOption = {
+        title: {
+          text: this.barTitle,
+          left: "center",
+        },
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "shadow",
+          },
+          formatter: function (params) {
+            var tar = params[0];
+            var tar1 = params[1];
+            var tar2 = params[2];
+            return (
+              tar.seriesName +
+              " : " +
+              tar.value +
+              "<br/>" +
+              tar1.seriesName +
+              ":" +
+              tar1.value +
+              "-" +
+              tar2.value
+            );
+          },
+        },
+        legend: { left: "right", data: name },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true,
+        },
+        xAxis: {
+          type: "value",
+          boundaryGap: [0, 0.01],
+        },
+        yAxis: {
+          type: "category",
+          data: this.baryData,
+        },
+        series: [
+          {
+            name: "患者",
+            type: "bar",
+            data: this.patientData,
+          },
 
+          {
+            name: "健康人",
+            type: "bar",
+            stack: "Total",
+            emphasis: {
+              focus: "self",
+            },
+            itemStyle: {
+              borderColor: "transparent",
+              color: "transparent",
+            },
+            emphasis: {
+              itemStyle: {
+                borderColor: "transparent",
+                color: "transparent",
+              },
+            },
+            data: this.healthDataLow,
+          },
+          {
+            name: "健康人",
+            type: "bar",
+            stack: "Total",
+            emphasis: {
+              focus: "self",
+            },
+            data: this.healthDataHigh,
+          },
+        ],
+      };
       option && myChart.setOption(option);
+      barOption && barChart.setOption(barOption);
     },
     submitForm(stepIndex) {
       let formName = this.formArray[stepIndex];
@@ -395,17 +472,54 @@ export default {
           } else if (stepIndex == 1) {
             this.showChart = !this.showChart;
             this.showStep = !this.showStep;
-            this.head1=!this.head1;
-            this.head2=!this.head2;
+            this.head1 = !this.head1;
+            this.head2 = !this.head2;
             this.tableisShow = !this.tableisShow;
             // this.showChart=!this.showChart
             // this.showStep=!this.showStep
             let select = this.oneSelectForm.formData.selectedData;
-            const temp1 = [0, 0, 0, 0, 0, 0, 0];
-            temp1[4] = select["BU"];
-            temp1[6] = select["ALT"];
-
+            const temp1 = [0, 0, 0, 0];
+            temp1[0] = select["BUN"];
+            temp1[1] = select["BU"];
+            temp1[2] = select["SCR"];
+            temp1[3] = select["UCR"];
+            this.kidneyPatient = temp1;
             this.patientData = temp1;
+            this.liverPatient[0] = select["ALT"];
+            this.liverPatient[1] = select["AST"];
+            this.liverPatient[2] = select["GGT"];
+            this.liverPatient[3] = select["ALP"];
+            let nameArr = this.kidneyFormalData.map((item) => {
+              return item.nameCH;
+            });
+            this.baryData = nameArr;
+            var count = 0;
+            var count1 = 0;
+            for (let j in select) {
+              for (var i = 0; i < this.kidneyFormalData.length; i++) {
+                if (this.kidneyFormalData[i].name == j) {
+                  if (
+                    select[j] < this.kidneyFormalData[i].min ||
+                    select[j] > this.kidneyFormalData[i].max
+                  ) {
+                    console.log(select[j]);
+                    count++;
+                  }
+                }
+              }
+              for (var i = 0; i < this.liverFormalData.length; i++) {
+                if (this.liverFormalData[i].name == j) {
+                  if (
+                    select[j] < this.liverFormalData[i].min ||
+                    select[j] > this.liverFormalData[i].max
+                  ) {
+                    count1++;
+                  }
+                }
+              }
+            }
+            this.kidneyAbnormal = count;
+            this.liverAbnormal = count1;
             this.drawChart();
           }
         } else {
@@ -462,30 +576,9 @@ export default {
           val
       ).then((response) => {
         this.tableData = response.data;
+     
       });
     },
-    changeKidney(val){
-      for (let i in this.kidneyFormalData){
-        if(this.kidneyFormalData[i].nameCH==val){
-          this.healthDataLow[4]=this.kidneyFormalData[i].min;
-          this.healthDataHigh[4]=this.kidneyFormalData[i].max-this.kidneyFormalData[i].min;
-          this.patientData[4]=this.oneSelectForm.formData.selectedData[this.kidneyFormalData[i].name];
-        }
-       
-      }
-       this.drawChart();
-    },
-    changeLiver(val){
-      for (let i in this.liverFormalData){
-        if(this.liverFormalData[i].nameCH==val){
-          this.healthDataLow[6]=this.liverFormalData[i].min;
-          this.healthDataHigh[6]=this.liverFormalData[i].max-this.liverFormalData[i].min;
-          this.patientData[6]=this.oneSelectForm.formData.selectedData[this.liverFormalData[i].name];
-        }
-       
-      }
-       this.drawChart();
-    }
   },
   mounted() {
     this.getAllData();
@@ -509,24 +602,22 @@ export default {
 #stepcontain {
   width: 100%;
   height: 100%;
-  margin-top: 150px;
+
   left: 15%;
 }
 .table {
   width: 1100px;
-   justify-content: center;
+  justify-content: center;
   align-items: center;
 }
 .charts {
-
-  margin-right: 20px;
   margin-top: 40px;
+  float: left;
 }
-.chooseBar{
-    display: flex;
-      justify-content: center;
+.chooseBar {
+  display: flex;
+  justify-content: center;
   align-items: center;
-  margin-top:40px;
-
+  margin-top: 40px;
 }
 </style>

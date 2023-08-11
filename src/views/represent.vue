@@ -219,6 +219,7 @@
           <el-form-item label="选择算法模型" prop="algoName">
             <el-row :gutter="60">
                   <h5 class="text">无监督类算法</h5>
+                  <br>
               <el-radio-group
                 v-model="algoForm.formData.algoName"
                 prop="selectedData"
@@ -237,6 +238,7 @@
             <br>
             <el-row :gutter="60">
                   <h5 class="text">有监督类算法</h5>
+                  <br>
               <el-radio-group
                 v-model="algoForm.formData.algoName"
                 prop="selectedData"
@@ -255,6 +257,7 @@
             <br>
             <el-row :gutter="60">
                   <h5 class="text">深度学习算法</h5>
+                  <br>
               <el-radio-group
                 v-model="algoForm.formData.algoName"
                 prop="selectedData"
@@ -289,7 +292,7 @@ import { postRequest, getRequest } from "@/utils/api";
 import knn from "@/components/algos/knn.vue";
 import oldData from "@/components/outcomeShow/oldData.vue";
 import newData from "@/components/outcomeShow/newData.vue";
-import storage from "@/utils/storage";
+
 
 export default {
   components: {
@@ -509,16 +512,15 @@ export default {
               });
             }
           } else if (stepIndex == 2) {
-            this.head1 = !this.head1;
-            this.head2 = !this.head2;
-            this.showStep = !this.showStep;
+           
             const params = {
-              modelTable: this.dataSelectForm.formData.selectedData, //模型选择的数据表表名
-              modelColumn: this.columnSelectForm.formData.selectedData, //模型选择的属性列（数组）
-              modelAlgo: this.algoForm.formData.algoName, //模型选择的算法名
+              tableName: this.dataSelectForm.formData.selectedData, //模型选择的数据表表名
+              runParams: this.columnSelectForm.formData.selectedData, //模型选择的属性列（数组）
+              // modelAlgo: this.algoForm.formData.algoName, //模型选择的算法名
+              aiName:'pca'
             };
 
-            getRequest("feature/runAi/" + params.modelTable).then(
+            postRequest("feature/runAi",params).then(
               (response) => {
                 console.log(response)
                 for (let i in response.data[0]) {
@@ -531,7 +533,9 @@ export default {
                   this.chartDatay.push(response.data[1][i])
               
                 }
-                  
+                   this.head1 = !this.head1;
+            this.head2 = !this.head2;
+            this.showStep = !this.showStep;
               }
             );
           }
@@ -587,7 +591,13 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+.el-form {
+  /deep/.el-form-item__content {
+    line-height: 20px;
+  }
+}
+
 #maintest {
   display: flex;
   flex-direction: column;
@@ -609,8 +619,8 @@ export default {
 
 .button1 {
   position: absolute;
-  margin-top: 20px;
-  left: 10%;
+
+  
 }
 .text {
   font-size: 14px;
