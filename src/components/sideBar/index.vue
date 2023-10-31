@@ -7,13 +7,13 @@
           mode="horizontal"
           active-text-color="#ffd04b"
           background-color="#071135"
-         
+             @select="handleSelect"
         >
           <el-menu-item index="1" style="color: #5292d8; font-size: 20px"
             ><i class="el-icon-box"></i>人群队列数据特征表征软件</el-menu-item
           >
           <!--            <template slot="title">当前服务器：</template>-->
-          <el-menu-item
+     <el-menu-item
             index="2"
             style="float: right; color: #fff; font-size: 14px"
             ><i class="el-icon-close"></i>退出登录</el-menu-item
@@ -21,7 +21,7 @@
           <el-menu-item
             index="3"
             style="float: right; color: #fff; font-size: 14px"
-            ><i class="el-icon-user"></i>欢迎你，xx</el-menu-item
+            ><i class="el-icon-user"></i>欢迎你，{{username}}</el-menu-item
           >
         </el-menu>
       </el-header>
@@ -44,6 +44,14 @@
             <el-menu-item index="/dataManage">
               <i class="el-icon-s-data"></i>
               数据管理</el-menu-item
+            >
+            <el-menu-item index="/columnManage">
+              <i class="el-icon-connection"></i>
+              字段管理</el-menu-item
+            >
+             <el-menu-item index="/operationManage">
+              <i class="el-icon-copy-document"></i>
+              操作日志</el-menu-item
             >
             <el-menu-item index="/represent">
               <i class="el-icon-data-line"></i>
@@ -75,6 +83,7 @@
 
 <script>
 import AppMain from "@/components/AppMain";
+import { postRequest, getRequest } from "@/utils/api";
 export default {
   components: { AppMain },
   data() {
@@ -82,14 +91,32 @@ export default {
       activeIndex: "1",
       activeIndex2: "1",
       dialogVisible: false,
+        username:"",
     };
   },
   methods: {
-    
+     handleSelect(key) {
+      if(key==2){
+      postRequest('/user/logout').then((resp)=>{
+        if(resp.code=="200"){
+          this.$router.replace("/");
+        }
+      })
+      }
+    },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
+    getUserName(){
+      console.log('in')
+       getRequest('index/getUserInfo').then((resp)=>{
+      this.username=resp.data
+       })
+    }
   },
+  mounted(){
+     this.getUserName();
+  }
 };
 </script>
 
@@ -104,13 +131,7 @@ export default {
   border-right: none;
   height: 100%;
 }
-/* .el-menu-demo.is-active {
-  background-color: #333 !important;
-  color: #ffd04b !important;
-} */
-/* .el-menu-demo{
-  background-color: #071135; 
-} */
+
 .header {
   background-color: #071135;
 

@@ -6,12 +6,25 @@ import represent from "@/views/represent.vue";
 import visualization from "@/views/visualization.vue";
 import dataManage from "@/views/dataManage.vue";
 import introduce from"@/views/introduce/introduce.vue"
-
+import logIn from "@/views/User/login.vue"
+import register from "@/views/User/register.vue"
+import columnManage from "@/views/columnManage/columnManage.vue"
+import operationManage from "@/views/operationManage.vue"
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
+    name: 'logIn',
+    component: logIn
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: register
+  },
+  {
+    path: '/first',
     redirect: '/introduce',
     name: 'first',
     component: SideBar,
@@ -38,6 +51,16 @@ const routes = [
       path: '/introduce',
       name: 'introduce',
       component: introduce,
+    },
+    {
+      path: '/operationManage',
+      name: 'operationManage',
+      component: operationManage,
+    },
+    {
+      path: '/columnManage',
+      name: 'columnManage',
+      component: columnManage,
     },
     ]
   },

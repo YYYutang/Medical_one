@@ -17,7 +17,7 @@
 
       <div id="data_source">
         <span>数据来源：</span>
-        <el-select v-model="value2" placeholder="请选择" @change="test">
+        <el-select v-model="value2" placeholder="请选择" >
           <el-option
             v-for="item in options_source"
             :key="item.value"
@@ -28,12 +28,11 @@
         </el-select>
       </div>
       <el-button @click="clearFilter" size="small">清除</el-button>
-
       <div id="top_right_buttons">
-        <el-button type="primary" @click="importData" size="small">导入数据表</el-button>
+        <el-button type="primary" @click="importData">导入数据表</el-button>
       </div>
     </div>
-    <br />
+
     <!--===============================    表格     ==============================================================-->
     <div id="table">
       <el-table
@@ -45,9 +44,16 @@
                 data?.tableOrigin?.includes(value2))
           )
         "
-        style="width: 100%; "
-        :row-style="{height:'33px',lineHeight:'10px',padding:'0px'}"
-        :header-cell-style="{ background: '#58AAFF', color: '#fff', lineHeight:'12px',padding:'0px',height:'34px',textAlign:'center' }"
+        style="width: 100%"
+        :row-style="{ height: '33px', lineHeight: '10px', padding: '0px' }"
+        :header-cell-style="{
+          background: '#58AAFF',
+          color: '#fff',
+          lineHeight: '12px',
+          padding: '0px',
+          height: '34px',
+          textAlign: 'center',
+        }"
       >
         <el-table-column label="数据表" prop="tableName"> </el-table-column>
         <el-table-column label="数据来源" prop="tableOrigin"> </el-table-column>
@@ -55,17 +61,31 @@
         <el-table-column label="存储大小" prop="tableSize"> </el-table-column>
         <el-table-column label="创建人" prop="tablePeople"> </el-table-column>
         <el-table-column label="创建时间" prop="tableDate"> </el-table-column>
-        
+        <el-table-column align="center">
+          <template slot="header">
+            <span>操作</span>
+          </template>
+          <template slot-scope="scope">
+            <el-button
+              size="small"
+              type="danger"
+              style="background: #1976d2; border: #1976d2"
+              @click="handleDelete(scope.$index)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
     </div>
 
     <!--===============================     导入数据表单   ===================================================================-->
     <el-dialog
+      v-loading="loading"
+      :element-loading-text="loadText"
       id="importDataTable"
       title="导入数据表"
       :visible.sync="dialogFormVisible"
       width="40%"
-      class="dialog"
     >
       <el-form
         :model="dialogForm"
@@ -73,90 +93,116 @@
         :rules="dialogForm.rules"
         label-width="110px"
       >
-        <el-form-item label="数据表名称" prop="tableName" >
+        <el-form-item label="选择数据表" prop="filesInfo">
+          <el-upload
+            action=""
+            class="upload"
+            ref="uploadRef"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :on-change="changeFile"
+            :auto-upload="false"
+            accept=".csv"
+            :limit="1"
+            :multiple="false"
+            :file-list="dialogForm.filesInfo"
+            :http-request="
+              (data) => {
+                upRequest(data);
+              }
+            "
+          >
+            <el-button slot="trigger" size="small" type="success"
+              >选取文件</el-button
+            >
+            <div slot="tip" class="el-upload__tip">只能上传csv文件</div>
+          </el-upload>
+        </el-form-item>
+
+        <el-form-item label="数据表名称" prop="tableName">
           <el-input
             v-model="dialogForm.tableName"
             placeholder="请输入数据表名称"
-            style="width: 220px"
           ></el-input>
-        </el-form-item>
-        <el-form-item label="特征个数" prop="featuresNum">
-          <el-input-number
-            v-model="dialogForm.featuresNum"
-            :min="1"
-            :step="1"
-            @change="generateFields"
-          ></el-input-number>
-        </el-form-item>
-        <el-form-item
-       
-          v-for="(field, index) in dialogForm.fields"
-          :key="index"
-          :label="'特征' + (index + 1)"
-          :prop="'field' + index"
-        
-        >
-          <el-input
-            v-model="field.name"
-            class="feature"
-            :placeholder="'请输入特证' + (index + 1) + '名称'"
-          ></el-input>
-      
-          <el-select v-model="field.type" style="  margin-left:20px;" placeholder="请选择特征类型" class="feature">
-            <el-option label="int" value="int"></el-option>
-            <el-option label="varchar(200)" value="varchar(200)"></el-option>
-          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button @click="resetForm()">重置</el-button>
-        <el-button type="primary" @click="submitTable">下一步</el-button>
+        <el-button @click="resetForm('dialogFormRef')">重置</el-button>
+        <el-button type="primary" @click="uploadFile">下一步</el-button>
       </div>
-      <!--          选择数据表单       -->
+
       <el-dialog
-        width="30%"
-        title="选择本地数据表"
-        :visible.sync="selectVisible"
         append-to-body
+        title="请选择特征类型"
+        :visible.sync="featuresVision"
       >
-        <el-upload
-          class="upload-demo"
-          action="#"
-          :on-preview="handlePreview"
-          ref="upload"
-          :http-request="(data) => getFile1(data)"
-          :auto-upload="false"
-          :on-remove="handleRemove"
-          :before-remove="beforeRemove"
-          :limit="1"
-          multiple
-        >
-          <el-button slot="trigger" size="small" type="primary"
-            >选取文件</el-button
+        <el-form class="featureLabel" label-width="auto">
+          <el-form-item
+            v-for="(name, index) in Object.keys(featuresMap)"
+            :key="index"
+            :label="name"
           >
-          <el-button
-            style="margin-left: 10px"
-            size="small"
-            type="success"
-            @click="submitUpload"
-            >上传到服务器</el-button
-          >
-          <div slot="tip" class="el-upload__tip">只能上传csv文件</div>
-        </el-upload>
+            <el-select
+              v-model="featuresMap[name]"
+              placeholder="请选择特征类型"
+              @input="e=>{test(e,name)}"
+            >
+              <el-option
+                label="人口学特征"
+                value="people"
+                key="people"
+              ></el-option>
+              <el-option
+                label="社会学特征"
+                value="social"
+                key="social"
+              ></el-option>
+              <el-option
+                label="生理学特征"
+                value="medical"
+                key="medical"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="compelete">完成上传</el-button>
+        </div>
       </el-dialog>
     </el-dialog>
   </div>
 </template>
 
-
 <script>
-import { postRequest } from "@/utils/api";
+import { getRequest, postRequest } from "@/utils/api";
+import { mapGetters, mapMutations, mapState, mapActions } from "vuex";
+
+import { resetForm, debounce } from "@/components/mixins/mixin";
 
 export default {
+  mixins: [resetForm, debounce],
+  computed: {
+    ...mapGetters(["dataDisList", "dataCreatorList"]),
+    ...mapState(["dataList"]),
+  },
+
+  watch: {
+    "dialogForm.tableName"() {
+      this.checkTableName();
+    },
+  },
+
   data() {
     return {
-      activeName: "first",
+      loading: false,
+      loadText: "拼命加载中",
+      disease: "",
+      creator: "",
+      tableData: [],
+      featuresVision: false,
+      featuresMap: {
+      },
       options_up: [
         //上传选项
         {
@@ -196,15 +242,27 @@ export default {
           label: "TXT",
         },
       ],
+      value2: "",
       dialogForm: {
+        filesInfo: [],
         tableName: "",
+        isOnly: true,
         featuresNum: 1,
         fields: [{ name: "", type: "" }],
-        file: {},
-        fileList: [],
         rules: {
           tableName: [
-            { required: true, message: "数据表名称不能为空", trigger: "blur" },
+            {
+              required: true,
+              message: "数据表名称不能为空",
+              trigger: "change",
+            },
+          ],
+          dataDisease: [
+            {
+              required: true,
+              message: "涉及疾病不能为空",
+              trigger: "blur",
+            },
           ],
           numFeatures: [
             { required: true, message: "特征个数不能为空", trigger: "blur" },
@@ -213,26 +271,47 @@ export default {
           ],
         },
       },
-      value2: "",
-
-      tableData: [],
       dialogFormVisible: false,
-      selectVisible: false,
-      search: "",
     };
   },
 
+  created() {
+    // 检查重名的防抖函数
+
+    this.checkTableName = this.debounce(() => {
+      getRequest("/DataTable/inspection", {
+        name: this.dialogForm.tableName,
+      }).then((res) => {
+        // 上一次重复了这一次不重复就要提醒一下
+        if (!this.dialogForm.isOnly && res) {
+          this.$message({
+            showClose: true,
+            message: "表名可用",
+            type: "success",
+          });
+        }
+        if (typeof res === "boolean") {
+          this.dialogForm.isOnly = res;
+        }
+        if (!res) {
+          this.$message({
+            showClose: true,
+            message: "数据表重名，请重新填写",
+            type: "warning",
+          });
+          return false;
+        }
+        return true;
+      });
+    }, 800);
+  },
+  mounted() {
+    this.getAllData();
+  },
+
   methods: {
-    handleEdit(index, row) {
-      console.log(index, row);
-    },
-    handleDelete(index) {
-      this.tableData.splice(index, 1);
-    },
-    clearFilter() {
-      this.value1 = "";
-      this.value2 = "";
-    },
+    ...mapMutations(["SetDataList"]),
+    ...mapActions(["getDataList"]),
     getAllData() {
       let tempList = JSON.parse(this.$store.getters.getAllTableData);
       for (let i = 0; i < tempList.length; i++) {
@@ -246,41 +325,48 @@ export default {
         };
         this.tableData.push(obj);
       }
-      console.log(this.tableData);
+
     },
+    clearFilter() {
+  
+      this.value1 = "";
+      this.value2 = "";
+    },
+    test(e, index) {
+      const obj = {
+        ...this.featuresMap
+      };
+      obj[index] = e;
+      this.featuresMap = obj;
+  
+    },
+
+
+    handleEdit(index, row) {
+      console.log(index, row);
+    },
+    handleDelete(row) {
+      postRequest(`DataTable/delete/${row.id}`).then((res) => {
+        this.SetDataList(res);
+      });
+    },
+  
     importData() {
       this.dialogFormVisible = true;
     },
-    generateFields() {
-      const numFields = parseInt(this.dialogForm.featuresNum);
-      if (!isNaN(numFields)) {
-        this.dialogForm.fields = Array.from({ length: numFields }, () => ({
-          name: "",
-          type: "",
-        }));
-      }
+
+    handleSubmit() {
+      console.log("文件上传中...");
     },
-    resetForm() {
-      this.dialogForm.dataSetName = "";
-      this.dialogForm.featuresNum = 1;
-      this.dialogForm.fields = [{ name: "", type: "" }];
-    },
-    submitUpload() {
-      this.$refs.upload.submit();
-    },
-    beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${file.name}？`);
-    },
+
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
     handlePreview(file) {
       console.log(file);
     },
-    uploadSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
-    },
     beforeUpload(file) {
+      //上传前的验证
       const isCSV =
         file.type === "text/csv" || file.type === "application/vnd.ms-excel";
       // const isLt2M = file.size / 1024 / 1024 < 2;
@@ -295,115 +381,190 @@ export default {
       return isCSV;
     },
 
-    submitTable() {
-      this.selectVisible = true;
-      //   const filedMap = new Map();
-      const filedMap = {};
-      let fieldtemp = this.dialogForm.fields;
-      for (let i = 0; i < fieldtemp.length; i++) {
-        let tempName = fieldtemp[i].name;
-        let tempType = fieldtemp[i].type;
-        //   filedMap.set(tempName,tempType)
-        filedMap[tempName] = tempType;
+    removeFileExtension(fileName) {
+      // 寻找最后一个点号的位置
+      const lastDotIndex = fileName.lastIndexOf(".");
 
-        //   filedMap[i] = temp;
+      // 如果找到了点号并且不在文件名的开头或结尾
+      if (
+        lastDotIndex !== -1 &&
+        lastDotIndex < fileName.length - 1 &&
+        lastDotIndex > 0
+      ) {
+        // 返回删除了后缀的文件名部分
+        return fileName.substring(0, lastDotIndex);
+      } else {
+        // 如果没有找到点号或者点号在文件名的开头或结尾，直接返回原文件名
+        return fileName;
       }
-      const params = {
-        //上传的内容
-        tableName: this.dialogForm.tableName,
-        fieldMap: filedMap,
-      };
-      console.log(params);
-      postRequest("/table/createTable", params).then((response) => {
-        console.log("in");
-        console.log(response);
-      });
     },
-    getFile1(data) {
-      console.log(data)
-      const file = new FormData();
-      file.append("file", data.file);
+
+    changeFile() {
+      console.log(this.$refs["uploadRef"].uploadFiles);
+      if (this.dialogForm.tableName.length < 1) {
+        this.dialogForm.tableName = this.removeFileExtension(
+          this.$refs["uploadRef"].uploadFiles[0].name
+        );
+      }
+    },
+
+    upRequest(data) {
+      const payload = new FormData();
+      payload.append("file", data.file);
+      console.log(data.file);
+      payload.append("newName", this.dialogForm.tableName);
+      payload.append("disease", this.dialogForm.dataDisease);
       const options = {
         method: "post",
-        data: file,
-        url: "/file/upload",
+        data: payload,
+        url: "/DataTable/upload",
         headers: {
           "Content-Type": "multipart/form-data",
         },
       };
+      this.$axios(options).then((res) => {
+        this.loading = false;
+        console.log(res);
+        if (res?.code == "200") {
+          this.$message({
+            showClose: true,
+            type: "success",
+            message: "上传成功",
+          });
+          let featureList = res.tableHeaders;
 
-      this.$axios(options)
-        .then((res) => {
-          if (res.code == "200") {
-            this.$alert("上传成功！", "结果提示", {
-              confirmButtonText: "确定",
-              callback: (action) => {
-                this.$message({
-                  type: "info",
-                  message: `action: ${action}`,
-                });
-                this.selectVisible = false;
-                this.dialogFormVisible = false;
-                this.dialogForm.file = {};
-                this.dialogForm.fileList = {};
-                this.dialogForm.tableName = "";
-                this.dialogForm.fields = [{ name: "", type: "" }];
-              },
-            });
+          // 把特征存为map的键
+          for (const item of featureList) {
+            // this.featuresMap.set(item, "people");
+            this.featuresMap[item] = "people";
           }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+          console.log(this.featuresMap);
+          this.featuresVision = true;
+        } else {
+          this.$message({
+            showClose: true,
+            type: "error",
+            message: "上传失败",
+          });
+        }
+      });
     },
-  },
-  created() {
-    //存入sessionstorage
-    this.getAllData();
+
+    uploadFile() {
+      if (this.$refs["uploadRef"].uploadFiles.length < 1) {
+        this.$message({
+          showClose: true,
+          type: "warning",
+          message: "请选择数据表",
+        });
+        return false;
+      }
+      this.checkTableName();
+      if (!this.dialogForm.isOnly) {
+        return false;
+      }
+      this.$refs["dialogFormRef"].validate((valid) => {
+        if (valid) {
+          this.loadText = "正在上传并解析文件";
+          this.loading = true;
+          this.$refs.uploadRef.submit();
+        }
+      });
+    },
+
+    compelete() {
+      this.loadText = "正在添加字段类型";
+      this.loading = true;
+      let tableHeaders = [];
+      console.log("compelete里的featuresMap.id", this.featuresMap.id);
+      for (const key in this.featuresMap) {
+        console.log("old", key, this.featuresMap[key]);
+        if (Object.hasOwnProperty.call(this.featuresMap, key)) {
+          console.log("new", key, this.featuresMap[key]);
+          switch (this.featuresMap[key]) {
+            case "people":
+              tableHeaders.push({
+                fieldName: key,
+                isDemography: "1",
+                isPhysiological: "0",
+                isSociology: "0",
+              });
+              break;
+            case "medical":
+              tableHeaders.push({
+                fieldName: key,
+                isDemography: "0",
+                isPhysiological: "1",
+                isSociology: "0",
+              });
+              break;
+            case "social":
+              tableHeaders.push({
+                fieldName: key,
+                isDemography: "0",
+                isPhysiological: "0",
+                isSociology: "1",
+              });
+              break;
+            default:
+              break;
+          }
+        }
+      }
+
+      postRequest("/tTableManager/insertTableManager", {
+        tableName: this.dialogForm.tableName,
+        tableHeaders,
+      }).then((res) => {
+        console.log(res);
+        // if(res.length>this.dataList.length){
+        // 这里不应重新获取数据列表，应该用res直接设置vuex里的datalist，但是有bug
+        // this.SetDataList(res);
+        this.getDataList();
+        this.$message({
+          showClose: true,
+          type: "success",
+          message: "操作成功，已添加数据表",
+        });
+        this.featuresVision = false;
+        this.dialogFormVisible = false;
+        // }
+      });
+    },
   },
 };
 </script>
-
 
 <style scoped>
 #top_buttons > * {
   display: inline-block;
 }
-#load_state {
+#DiseaseFilter {
   margin-right: 40px;
 }
-#data_source {
+#creatorFilter {
   margin-right: 20px;
 }
 #top_right_buttons {
   float: right;
   margin-right: 100px;
-  color: rgb(114, 175, 245);
 }
 #table {
   margin-top: 10px;
 }
-::v-deep .el-dialog__header {
-  background-color: rgb(114, 175, 245);
-
-}
-::v-deep .el-dialog__title{
-  font-size: 17px;
-  color: white;
-  font-weight: 400;
-}
-.feature{
-  display: inline-block; 
-    width: 200px;
-}
-.el-button{
-  size:small;
+#data_source {
+  margin-right: 20px;
 }
 
-/*#importDataTable >>> .el-input__inner{*/
-/*    width: 85%;*/
-/*}*/
-/*#features >>> .el-input__inner{*/
-/*    margin-bottom: 24px;*/
-/*}*/
+.featureLabel {
+  height: 55vh;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  overflow: auto;
+}
+
+.featureLabel .el-form-item__label {
+  color: #252525;
+}
 </style>
