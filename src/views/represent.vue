@@ -71,12 +71,12 @@
             </el-row>
           </el-form-item>
           <br />
-          <el-form-item class="button1" style="margin-left: 38%">
+          <div class="button1" style="margin-left: 38%">
             <el-button size="small" @click="stepBack(active)">上一步</el-button>
             <el-button size="small" type="primary" @click="submitForm(active)"
               >下一步</el-button
             >
-          </el-form-item>
+          </div>
         </el-form>
         <!--======================================     选择属性列表单      ======================================================-->
         <el-form
@@ -199,12 +199,12 @@
             </el-checkbox-group>
           </el-form-item>
           <br />
-          <el-form-item class="button1" style="margin-left: 38%">
+          <div class="button1" style="margin-left: 38%">
             <el-button size="small" @click="stepBack(active)">上一步</el-button>
             <el-button size="small" type="primary" @click="submitForm(active)"
               >下一步</el-button
             >
-          </el-form-item>
+          </div>
         </el-form>
 
         <!--======================================     算法选择表单     =======================================================-->
@@ -218,8 +218,8 @@
         >
           <el-form-item label="选择算法模型" prop="algoName">
             <el-row :gutter="60">
-                  <h5 class="text">无监督类算法</h5>
-                  <br>
+              <h5 class="text">无监督类算法</h5>
+              <br />
               <el-radio-group
                 v-model="algoForm.formData.algoName"
                 prop="selectedData"
@@ -228,17 +228,17 @@
                   :span="8"
                   v-for="item in algoOptions1"
                   :key="item.algoName"
-                > 
+                >
                   <el-radio :label="item.algoName" border>{{
                     item.algoName
                   }}</el-radio>
                 </el-col>
               </el-radio-group>
             </el-row>
-            <br>
+            <br />
             <el-row :gutter="60">
-                  <h5 class="text">有监督类算法</h5>
-                  <br>
+              <h5 class="text">有监督类算法</h5>
+              <br />
               <el-radio-group
                 v-model="algoForm.formData.algoName"
                 prop="selectedData"
@@ -247,17 +247,17 @@
                   :span="8"
                   v-for="item in algoOptions2"
                   :key="item.algoName"
-                > 
+                >
                   <el-radio :label="item.algoName" border>{{
                     item.algoName
                   }}</el-radio>
                 </el-col>
               </el-radio-group>
             </el-row>
-            <br>
+            <br />
             <el-row :gutter="60">
-                  <h5 class="text">深度学习算法</h5>
-                  <br>
+              <h5 class="text">深度学习算法</h5>
+              <br />
               <el-radio-group
                 v-model="algoForm.formData.algoName"
                 prop="selectedData"
@@ -266,9 +266,9 @@
                   :span="9"
                   v-for="item in algoOptions3"
                   :key="item.algoName"
-                  style="marigin-right:5px"
-                > 
-                  <el-radio :label="item.algoName" border >{{
+                  style="marigin-right: 5px"
+                >
+                  <el-radio :label="item.algoName" border>{{
                     item.algoName
                   }}</el-radio>
                 </el-col>
@@ -276,12 +276,12 @@
             </el-row>
           </el-form-item>
           <br />
-          <el-form-item class="button1" style="margin-left: 38%">
+          <div class="button1" style="margin-left: 38%">
             <el-button size="small" @click="stepBack(active)">上一步</el-button>
-            <el-button  size="small" type="primary" @click="submitForm(active)"
+            <el-button size="small" type="primary" @click="submitForm(active)"
               >完成</el-button
             >
-          </el-form-item>
+          </div>
         </el-form>
       </div>
     </el-container>
@@ -292,7 +292,6 @@ import { postRequest, getRequest } from "@/utils/api";
 import knn from "@/components/algos/knn.vue";
 import oldData from "@/components/outcomeShow/oldData.vue";
 import newData from "@/components/outcomeShow/newData.vue";
-
 
 export default {
   components: {
@@ -321,49 +320,51 @@ export default {
         {
           id: 1,
           algoName: "PCA(主成分分析)",
-          algoType:"1"
+          algoType: "1",
         },
         {
           id: 2,
           algoName: "ICA(独立成分分析)",
-          algoType:"1"
+          algoType: "1",
         },
         {
           id: 3,
           algoName: "因子分析",
-          algoType:"1"
-        },],
-        algoOptions2: [
-            {
+          algoType: "1",
+        },
+      ],
+      algoOptions2: [
+        {
           id: 4,
           algoName: "LDA(线性判别分析)",
-          algoType:"2"
+          algoType: "2",
         },
-          {
+        {
           id: 5,
           algoName: "稀疏表示学习",
-          algoType:"2"
+          algoType: "2",
         },
-         {
+        {
           id: 6,
           algoName: "神经网络",
-          algoType:"2"
-        },],
-        algoOptions3: [
+          algoType: "2",
+        },
+      ],
+      algoOptions3: [
         {
           id: 7,
           algoName: "CNN(卷积神经网络)",
-          algoType:"3"
+          algoType: "3",
         },
-         {
+        {
           id: 8,
           algoName: "RNN(循环神经网络)",
-          algoType:"3"
+          algoType: "3",
         },
       ],
       value1: [],
       value2: [],
-      chartDatay:[],
+      chartDatay: [],
       formArray: ["dataSelectForm", "columnSelectForm", "algoForm"],
       active: 0,
 
@@ -493,12 +494,13 @@ export default {
               getRequest(
                 "/feature/getStatisticaldData/" + tableName.selectedData
               ).then((response) => {
-                console.log(response);
+          
                 this.statisData = response.data;
               });
             }
             if (this.active == 2) {
               const page = 1;
+       
               getRequest(
                 "/feature/getInfoBySelectedFiled?page=" +
                   page +
@@ -507,37 +509,32 @@ export default {
                   "&params=" +
                   this.columnSelectForm.formData.selectedData
               ).then((response) => {
-                console.log(response);
                 this.dataChoose = response;
+
               });
             }
           } else if (stepIndex == 2) {
-           
             const params = {
               tableName: this.dataSelectForm.formData.selectedData, //模型选择的数据表表名
               runParams: this.columnSelectForm.formData.selectedData, //模型选择的属性列（数组）
               // modelAlgo: this.algoForm.formData.algoName, //模型选择的算法名
-              aiName:'pca'
+              aiName: "pca",
             };
 
-            postRequest("feature/runAi",params).then(
-              (response) => {
-                console.log(response)
-                for (let i in response.data[0]) {
-                  var num = parseInt(i) + 1;
-                  this.dataNewColumns.push("主成分" + num);
-                  this.dataNew["主成分" + num] = response.data[0][i];
-              
-                }
-                   for (let i in response.data[1]) {
-                  this.chartDatay.push(response.data[1][i])
-              
-                }
-                   this.head1 = !this.head1;
-            this.head2 = !this.head2;
-            this.showStep = !this.showStep;
+            postRequest("feature/runAi", params).then((response) => {
+  
+              for (let i in response.data[0]) {
+                var num = parseInt(i) + 1;
+                this.dataNewColumns.push("主成分" + num);
+                this.dataNew["主成分" + num] = response.data[0][i];
               }
-            );
+              for (let i in response.data[1]) {
+                this.chartDatay.push(response.data[1][i]);
+              }
+              this.head1 = !this.head1;
+              this.head2 = !this.head2;
+              this.showStep = !this.showStep;
+            });
           }
         } else {
           console.log("error submit!!");
@@ -595,6 +592,9 @@ export default {
 .el-form {
   /deep/.el-form-item__content {
     line-height: 20px;
+      display: flex;
+    flex-direction: column;
+      align-items: center;
   }
 }
 
@@ -602,7 +602,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: baseline;
 }
 
 #step {
@@ -612,15 +612,12 @@ export default {
 }
 #stepcontain {
   position: absolute;
-
   top: 340px;
-  left: 37%;
+  left: 30%;
 }
 
 .button1 {
   position: absolute;
-
-  
 }
 .text {
   font-size: 14px;

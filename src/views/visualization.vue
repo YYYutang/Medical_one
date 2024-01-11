@@ -25,11 +25,7 @@
           ref="dataSelectForm"
           label-position="top"
         >
-          <el-form-item
-            label="选择数据表："
-            prop="selectedData"
-            style="margin-left: 30%"
-          >
+          <el-form-item label="选择数据表：" prop="selectedData">
             <el-row :gutter="10">
               <el-radio-group
                 v-model="dataSelectForm.formData.selectedData"
@@ -49,11 +45,11 @@
             </el-row>
           </el-form-item>
           <br />
-          <el-form-item style="margin-left: 45%">
+          <div style="margin-left: 45%">
             <el-button type="primary" size="small" @click="submitForm(active)"
               >下一步</el-button
             >
-          </el-form-item>
+          </div>
         </el-form>
         <!--======================================     选择一条数据     ======================================================-->
         <el-form
@@ -65,8 +61,8 @@
           label-position="top"
         >
           <el-form-item prop="selectedData">
-            <h3 style="margin-left: 20%">选择一个病人：</h3>
-            <div class="table" style="margin-left: 20%">
+            <h3>选择一个病人：</h3>
+            <div class="table">
               <el-table
                 :data="tableData"
                 v-model="oneSelectForm.formData.selectedData"
@@ -101,7 +97,7 @@
             </div>
             <br />
             <el-pagination
-              style="margin-left: 40%"
+
               background
               class="pagination"
               layout="prev, pager, next"
@@ -114,12 +110,12 @@
           </el-form-item>
 
           <br />
-          <el-form-item style="margin-left: 45%">
+          <div style="margin-left: 45%">
             <el-button size="small" @click="stepBack(active)">上一步</el-button>
             <el-button type="primary" size="small" @click="submitForm(active)"
               >完成</el-button
             >
-          </el-form-item>
+          </div>
         </el-form>
       </div>
 
@@ -241,11 +237,15 @@ export default {
           tooltip: {
             trigger: "item",
             formatter: function (args) {
-              if(args.name=='kidney'){
-              return args.name+"处的危险指标数："+that.kidneyAbnormal+"个";
+              if (args.name == "kidney") {
+                return (
+                  args.name + "处的危险指标数：" + that.kidneyAbnormal + "个"
+                );
               }
-                if(args.name=='liver'){
-              return args.name+"处的危险指标数："+that.liverAbnormal+"个";
+              if (args.name == "liver") {
+                return (
+                  args.name + "处的危险指标数：" + that.liverAbnormal + "个"
+                );
               }
             },
           },
@@ -254,18 +254,21 @@ export default {
             right: "50%",
             map: "organ_diagram",
             selectedMode: "multiple",
-tooltip: {
-            trigger: "item",
-            formatter: function (args) {
-    
-              if(args.name=='kidney'){
-              return args.name+"处的危险指标数："+that.kidneyAbnormal+"个";
-              }
-                if(args.name=='liver'){
-              return args.name+"处的危险指标数："+that.liverAbnormal+"个";
-              }
+            tooltip: {
+              trigger: "item",
+              formatter: function (args) {
+                if (args.name == "kidney") {
+                  return (
+                    args.name + "处的危险指标数：" + that.kidneyAbnormal + "个"
+                  );
+                }
+                if (args.name == "liver") {
+                  return (
+                    args.name + "处的危险指标数：" + that.liverAbnormal + "个"
+                  );
+                }
+              },
             },
-          },
             emphasis: {
               focus: "self",
               itemStyle: {
@@ -576,7 +579,6 @@ tooltip: {
           val
       ).then((response) => {
         this.tableData = response.data;
-     
       });
     },
   },
@@ -586,25 +588,36 @@ tooltip: {
 };
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+.el-form {
+  /deep/.el-form-item__content {
+    line-height: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+.el-form-item {
+
+        width: 60%;
+    margin: 0 auto;
+    margin-top: 30px;
+}
 #maintest {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
 }
-
 #step {
-  width: 80%;
   height: 100%;
   margin-top: 130px;
 }
 #stepcontain {
   width: 100%;
   height: 100%;
-
   left: 15%;
 }
+
 .table {
   width: 1100px;
   justify-content: center;

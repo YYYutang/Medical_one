@@ -53,6 +53,14 @@
               <i class="el-icon-copy-document"></i>
               操作日志</el-menu-item
             >
+             <el-menu-item index="/completeMissing">
+              <i class="el-icon-s-custom"></i>
+              缺失值补齐</el-menu-item
+            >
+             <el-menu-item index="/stasticAnalyze">
+              <i class="el-icon-s-custom"></i>
+              统计分析</el-menu-item
+            >
             <el-menu-item index="/represent">
               <i class="el-icon-data-line"></i>
               疾病的特征指标表征</el-menu-item

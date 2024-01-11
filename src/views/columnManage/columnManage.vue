@@ -1,7 +1,7 @@
 <template>
   <div class="mainContainer">
     <!--==========================     头部按钮     ==============================================================-->
-    
+
     <br />
     <!--===============================    表格     ==============================================================-->
     <div id="table" v-show="showTable">
@@ -224,20 +224,23 @@
         </el-table-column>
       </el-table>
     </div>
-     <div class="pagination" v-show="showPagination">
-          <el-pagination
-            background
-            class="pagination"
-            layout="prev, pager, next"
-            :current-page="currentPage"
-            @current-change="changePage"
-            :total="allPage"
-          >
-          </el-pagination>
-        </div>
-  <div v-show="showEmpty">
-    <el-empty :image-size="200" description="您的账号下目前没有可查看的表" ></el-empty>
-  </div>
+    <div class="pagination" v-show="showPagination">
+      <el-pagination
+        background
+        class="pagination"
+        layout="prev, pager, next"
+        :current-page="currentPage"
+        @current-change="changePage"
+        :total="allPage"
+      >
+      </el-pagination>
+    </div>
+    <div v-show="showEmpty">
+      <el-empty
+        :image-size="200"
+        description="您的账号下目前没有可查看的表"
+      ></el-empty>
+    </div>
   </div>
 </template>
 
@@ -249,53 +252,12 @@ export default {
   data() {
     return {
       activeName: "first",
-      options_up: [
-        //上传选项
-        {
-          value: "正在上传",
-          label: "正在上传",
-        },
-        {
-          value: "上传成功",
-          label: "上传成功",
-        },
-        {
-          value: "上传失败",
-          label: "上传失败",
-        },
-      ],
-      value1: "",
-
-      options_source: [
-        //数据来源选项
-        {
-          value: "CSV",
-          label: "CSV",
-        },
-        {
-          value: "手工录入",
-          label: "手工录入",
-        },
-        {
-          value: "MySQL",
-          label: "MySQL",
-        },
-        {
-          value: "EXCEL",
-          label: "EXCEL",
-        },
-        {
-          value: "TXT",
-          label: "TXT",
-        },
-      ],
-      value2: "",
-      currentPage:1,
-      allPage:0,
+      currentPage: 1,
+      allPage: 0,
       columnData: [],
-      showTable:false,
-      showPagination:false,
-      showEmpty:false,
+      showTable: false,
+      showPagination: false,
+      showEmpty: false,
       search: "",
     };
   },
@@ -318,15 +280,10 @@ export default {
       });
     },
     handleDelete(row, index) {
-        var that=this;
+      var that = this;
       postRequest("filedManager/delFiled", row).then((resp) => {
         if (resp.code == 200) {
-                   console.log(that.columnData)
-            // const tempList=[...that.columnData]
-            that.columnData.splice(index.$index,1)
-        //     console.log(tempList)
-        //   that.columnData=tempList
-          console.log(that.columnData)
+          that.columnData.splice(index.$index, 1);
           this.$message({
             message: "删除成功",
             type: "success",
@@ -338,7 +295,7 @@ export default {
     },
     changePage(val) {
       this.currentPage = val;
-       getRequest("/filedManager/queryTableManager?pageNum=" + val).then(
+      getRequest("/filedManager/queryTableManager?pageNum=" + val).then(
         (resp) => {
           const newArray = resp.data.map((item) => ({
             ...item,
@@ -347,31 +304,26 @@ export default {
           this.columnData = newArray;
         }
       );
-    
     },
-    clearFilter() {
-      this.value1 = "";
-      this.value2 = "";
-    },
+
     getColumn() {
       getRequest("/filedManager/queryTableManager?pageNum=" + 1).then(
         (resp) => {
-       if(resp.data.length!=0){
-            this.allPage=resp.total*10;
-          const newArray = resp.data.map((item) => ({
-            ...item,
-            iseditor: false,
-          }));
-          this.columnData = newArray;
-         this.showPagination=true;
-         this.showTable=true;
+          if (resp.data.length != 0) {
+            this.allPage = resp.total * 10;
+            const newArray = resp.data.map((item) => ({
+              ...item,
+              iseditor: false,
+            }));
+            this.columnData = newArray;
+            this.showPagination = true;
+            this.showTable = true;
+          } else {
+            this.showEmpty = true;
+          }
         }
-        else{
-          this.showEmpty=true;
-        }
-        });
-        
-    }
+      );
+    },
   },
   created() {
     this.getColumn();

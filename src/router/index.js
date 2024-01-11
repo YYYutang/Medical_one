@@ -10,6 +10,14 @@ import logIn from "@/views/User/login.vue"
 import register from "@/views/User/register.vue"
 import columnManage from "@/views/columnManage/columnManage.vue"
 import operationManage from "@/views/operationManage.vue"
+import completeMissing from "@/views/completeMissing/index.vue"
+import characterChoose from "@/components/characterChoose/index.vue"
+import datasetChoose from "@/components/datasetChoose/index.vue"
+import missingalgo from "@/views/completeMissing/algo.vue"
+import missingoutcome from "@/views/completeMissing/outcome.vue"
+import stasticAnalyze from "@/views/stasticAnalyze/index.vue"
+import describeAnalyze from "@/views/stasticAnalyze/describeAnalyze/index.vue"
+import describeOutcome from "@/views/stasticAnalyze/describeAnalyze/outcome.vue"
 Vue.use(VueRouter)
 
 const routes = [
@@ -62,6 +70,46 @@ const routes = [
       name: 'columnManage',
       component: columnManage,
     },
+    {
+      path: '/completeMissing',
+      name: 'completeMissing',
+      component: completeMissing,
+    },
+    {
+      path: '/characterChoose',
+      name: 'characterChoose',
+      component: characterChoose,
+    },
+    {
+      path: '/datasetChoose',
+      name: 'datasetChoose',
+      component: datasetChoose,
+    },
+    {
+      path: '/missingalgo',
+      name: 'missingalgo',
+      component: missingalgo,
+    },
+    {
+      path: '/missingoutcome',
+      name: 'missingoutcome',
+      component: missingoutcome,
+    },
+    {
+      path: '/stasticAnalyze',
+      name: 'stasticAnalyze',
+      component: stasticAnalyze,
+    },
+    {
+      path: '/describeAnalyze',
+      name: 'describeAnalyze',
+      component: describeAnalyze,
+    },
+    {
+      path: '/describeOutcome',
+      name: 'describeOutcome',
+      component: describeOutcome,
+    }
     ]
   },
 ]

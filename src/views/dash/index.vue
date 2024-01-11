@@ -271,7 +271,7 @@ export default {
     },
     getIncrease() {
       getRequest("/index/showTableTrend").then((response) => {
-        console.log(response.data);
+  
         this.xdata = Object.keys(response.data).sort();
         for (let i in this.xdata) {
           this.ydata.push(response.data[this.xdata[i]]);
@@ -288,16 +288,9 @@ export default {
   },
   mounted() {
     this.getStatis();
-
     this.getAllData();
-    // this.getIncrease();
-
     this.getIncrease();
-    // const that = this;
-    // this.mychart.resize();
-    // window.addEventListener("resize", () => {
-    //   that.mychart.resize();
-    // });
+
   },
 };
 </script>

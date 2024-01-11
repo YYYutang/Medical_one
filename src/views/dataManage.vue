@@ -17,7 +17,7 @@
 
       <div id="data_source">
         <span>数据来源：</span>
-        <el-select v-model="value2" placeholder="请选择" >
+        <el-select v-model="value2" placeholder="请选择">
           <el-option
             v-for="item in options_source"
             :key="item.value"
@@ -66,6 +66,9 @@
             <span>操作</span>
           </template>
           <template slot-scope="scope">
+            <el-button size="small" @click="handleSelect(scope.row)"
+              >查看</el-button
+            >
             <el-button
               size="small"
               type="danger"
@@ -77,6 +80,43 @@
         </el-table-column>
       </el-table>
     </div>
+    <el-dialog :visible.sync="dialogFormVisible2" :title="selectedTable">
+      <el-table
+        :data="dataAll"
+        style="width: auto"
+        border
+        :row-style="{ height: '33px', lineHeight: '10px', padding: '0px' }"
+        :header-cell-style="{
+          background: '#58AAFF',
+          color: '#fff',
+          lineHeight: '12px',
+          padding: '0px',
+          height: '34px',
+          textAlign: 'center',
+        }"
+        stripe
+      >
+        <el-table-column
+          v-for="(item, index) in columns"
+          :key="index"
+          :label="item"
+          :prop="item"
+          width="150"
+        >
+        </el-table-column>
+      </el-table>
+
+      <el-pagination
+        background
+        class="pagination"
+        layout="prev, pager, next"
+        :current-page="currentPage"
+        :page-size="pageSize"
+        @current-change="handleCurrentChange"
+        :total="allPage"
+      >
+      </el-pagination>
+    </el-dialog>
 
     <!--===============================     导入数据表单   ===================================================================-->
     <el-dialog
@@ -146,7 +186,11 @@
             <el-select
               v-model="featuresMap[name]"
               placeholder="请选择特征类型"
-              @input="e=>{test(e,name)}"
+              @input="
+                (e) => {
+                  test(e, name);
+                }
+              "
             >
               <el-option
                 label="人口学特征"
@@ -200,9 +244,9 @@ export default {
       disease: "",
       creator: "",
       tableData: [],
+      dataAll: [],
       featuresVision: false,
-      featuresMap: {
-      },
+      featuresMap: {},
       options_up: [
         //上传选项
         {
@@ -272,6 +316,12 @@ export default {
         },
       },
       dialogFormVisible: false,
+      dialogFormVisible2: false,
+      currentPage: 1,
+      pageSize: 10,
+      allPage: 0,
+      selectedTable: "",
+      columns: [],
     };
   },
 
@@ -325,22 +375,19 @@ export default {
         };
         this.tableData.push(obj);
       }
-
     },
+
     clearFilter() {
-  
       this.value1 = "";
       this.value2 = "";
     },
     test(e, index) {
       const obj = {
-        ...this.featuresMap
+        ...this.featuresMap,
       };
       obj[index] = e;
       this.featuresMap = obj;
-  
     },
-
 
     handleEdit(index, row) {
       console.log(index, row);
@@ -350,7 +397,33 @@ export default {
         this.SetDataList(res);
       });
     },
-  
+    handleSelect(row) {
+      this.dialogFormVisible2 = true;
+      this.selectedTable = row.tableName;
+      getRequest(
+        "/feature/getInfoByTableName?tableName=" +
+          this.selectedTable +
+          "&page=" +
+          1
+      ).then((response) => {
+        this.dataAll = response.data;
+        console.log(response);
+        this.allPage = response.total * 10;
+        this.columns = Object.keys(this.dataAll[0]);
+      });
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      getRequest(
+        "/feature/getInfoByTableName?tableName=" +
+          this.selectedTable +
+          "&page=" +
+          val
+      ).then((response) => {
+        console.log(response);
+        this.dataAll = response.data;
+      });
+    },
     importData() {
       this.dialogFormVisible = true;
     },
@@ -567,4 +640,12 @@ export default {
 .featureLabel .el-form-item__label {
   color: #252525;
 }
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+
 </style>

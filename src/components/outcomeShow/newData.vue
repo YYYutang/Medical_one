@@ -185,8 +185,8 @@ export default {
       myChart2.setOption(option2);
     },
     dealdata() {
-      this.dataColumn = Object.keys(this.dataChoose.data[0]);
 
+      this.dataColumn = this.columnName;
       this.allPage = this.dataChoose.total * 10;
       this.dataChooseNow = this.dataChoose.data;
       // this.allPage2=this.dataNew.total*10;
